@@ -1,0 +1,19 @@
+# -- Android user build checks --
+# 
+# Basic checks for a production build.
+# Checks cover: system.img
+
+[FileContent."ro.build=user"]
+File = "/system/build.prop"
+Regex = ".*\\nro\\.build\\.type=user\n.*"
+Desc = "ro.build.type must be user"
+
+[FileContent."ro.secure=1"]
+File = "/system/etc/prop.default"
+Regex = ".*\\nro\\.secure=1.*"
+Desc = "ro.secure must be 1"
+
+[FileContent."ro.debuggable=0"]
+File = "/system/etc/prop.default"
+Regex = ".*\\nro\\.debuggable=0.*"
+Desc = "ro.debuggable must be 0"

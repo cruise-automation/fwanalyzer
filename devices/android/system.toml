@@ -1,0 +1,32 @@
+# -- Basic Config for Android's system.img --
+
+[GlobalConfig]
+FsType = "extfs"
+# enable SeLinux
+FsTypeOptions = "selinux"
+DigestImage = true
+
+[GlobalFileChecks]
+Suid = true
+# run-as is a common suid binary
+SuidWhiteList = ["/system/bin/runs-as"]
+# enable SeLinux checks
+SeLinuxLabel = true
+# system is mounted read-only
+WorldWrite = false
+# UIDs and GIDs need to be adjusted for each device
+Uids = [0,1000,1003,1028,1036,2000]
+Gids = [0,1000,1003,1028,1036,2000]
+BadFiles = [ "/system/xbin/su" ]
+
+[FileTreeCheck]
+OldTreeFilePath = "system_filetree.json"
+CheckPermsOwnerChange = true
+CheckFileSize = false
+
+[FilePathOwner."/system/etc"]
+Uid = 0
+Gid = 0
+
+[Include."android_user_build_checks.toml"]
+[Include."android_properties.toml"]

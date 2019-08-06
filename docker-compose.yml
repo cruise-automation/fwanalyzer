@@ -1,0 +1,7 @@
+version: "3"
+services:
+  fwanalyzer:
+    build: .
+    working_dir: /go/src/github.com/cruise-automation/fwanalyzer
+    volumes:
+      - .:/go/src/github.com/cruise-automation/fwanalyzer

@@ -1,0 +1,226 @@
+{
+    "files": [
+        {
+            "name": "/world", 
+            "gid": 0, 
+            "mode": 33206, 
+            "se_linux_label": "-", 
+            "uid": 0, 
+            "link_target": "", 
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 
+            "size": 0
+        }, 
+        {
+            "name": "/bin/elf_arm64", 
+            "gid": 1001, 
+            "mode": 33277, 
+            "se_linux_label": "-", 
+            "uid": 1001, 
+            "link_target": "", 
+            "digest": "5e18d8042a38789761dc950cd3aa73b3562d69a4dce2a5ef8530301e71494168", 
+            "size": 2110768
+        }, 
+        {
+            "name": "/dir1", 
+            "gid": 0, 
+            "mode": 16877, 
+            "se_linux_label": "-", 
+            "uid": 0, 
+            "link_target": "", 
+            "digest": "0", 
+            "size": 1024
+        }, 
+        {
+            "name": "/dir1/dir11", 
+            "gid": 0, 
+            "mode": 16877, 
+            "se_linux_label": "-", 
+            "uid": 0, 
+            "link_target": "", 
+            "digest": "0", 
+            "size": 1024
+        }, 
+        {
+            "name": "/dir3/file31", 
+            "gid": 1001, 
+            "mode": 33188, 
+            "se_linux_label": "-", 
+            "uid": 1001, 
+            "link_target": "", 
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 
+            "size": 0
+        }, 
+        {
+            "name": "/bin/elf_arm32", 
+            "gid": 1001, 
+            "mode": 33277, 
+            "se_linux_label": "-", 
+            "uid": 1001, 
+            "link_target": "", 
+            "digest": "682dfed81319befa3fcec071d4d86e7093f19929ef75dea7b16abb196a2aa667", 
+            "size": 1957752
+        }, 
+        {
+            "name": "/date1", 
+            "gid": 0, 
+            "mode": 33188, 
+            "se_linux_label": "-", 
+            "uid": 1, 
+            "link_target": "", 
+            "digest": "8b15095ed1af38d5e383af1c4eadc5ae73cab03964142eb54cb0477ccd6a8dd5", 
+            "size": 29
+        }, 
+        {
+            "name": "/dir3", 
+            "gid": 1001, 
+            "mode": 16877, 
+            "se_linux_label": "-", 
+            "uid": 1001, 
+            "link_target": "", 
+            "digest": "0", 
+            "size": 1024
+        }, 
+        {
+            "name": "/dir1/file11", 
+            "gid": 0, 
+            "mode": 33188, 
+            "se_linux_label": "-", 
+            "uid": 0, 
+            "link_target": "", 
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 
+            "size": 0
+        }, 
+        {
+            "name": "/dir2", 
+            "gid": 1001, 
+            "mode": 16877, 
+            "se_linux_label": "-", 
+            "uid": 1001, 
+            "link_target": "", 
+            "digest": "0", 
+            "size": 1024
+        }, 
+        {
+            "name": "/dir2/file21", 
+            "gid": 0, 
+            "mode": 36333, 
+            "se_linux_label": "-", 
+            "uid": 0, 
+            "link_target": "", 
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 
+            "size": 0
+        }, 
+        {
+            "name": "/file1", 
+            "gid": 0, 
+            "mode": 33178, 
+            "se_linux_label": "-", 
+            "uid": 0, 
+            "link_target": "", 
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 
+            "size": 0
+        }, 
+        {
+            "name": "/file2", 
+            "gid": 0, 
+            "mode": 32851, 
+            "se_linux_label": "-", 
+            "uid": 123, 
+            "link_target": "", 
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 
+            "size": 0
+        }, 
+        {
+            "name": "/bin", 
+            "gid": 1001, 
+            "mode": 16877, 
+            "se_linux_label": "-", 
+            "uid": 1001, 
+            "link_target": "", 
+            "digest": "0", 
+            "size": 1024
+        }, 
+        {
+            "name": "/bin/elf_x8664", 
+            "gid": 1001, 
+            "mode": 33277, 
+            "se_linux_label": "-", 
+            "uid": 1001, 
+            "link_target": "", 
+            "digest": "9de3537418e232700ea8d187762beb6f1862a999372a47e5d04101ca754f2000", 
+            "size": 2011612
+        }, 
+        {
+            "name": "/bin/elf_x8664_stripped", 
+            "gid": 1001, 
+            "mode": 33204, 
+            "se_linux_label": "-", 
+            "uid": 1001, 
+            "link_target": "", 
+            "digest": "fb969a744228ee4471377930d6f31d3bb2c41a6f6b04c0253ebdf1f57180a421", 
+            "size": 1211048
+        }, 
+        {
+            "name": "/lost+found", 
+            "gid": 0, 
+            "mode": 16832, 
+            "se_linux_label": "-", 
+            "uid": 0, 
+            "link_target": "", 
+            "digest": "0", 
+            "size": 12288
+        }, 
+        {
+            "name": "/dir3/file33", 
+            "gid": 1001, 
+            "mode": 33188, 
+            "se_linux_label": "-", 
+            "uid": 1001, 
+            "link_target": "", 
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 
+            "size": 0
+        }, 
+        {
+            "name": "/ver", 
+            "gid": 0, 
+            "mode": 33188, 
+            "se_linux_label": "-", 
+            "uid": 0, 
+            "link_target": "", 
+            "digest": "44c77e41961f354f515e4081b12619fdb15829660acaa5d7438c66fc3d326df3", 
+            "size": 15
+        }, 
+        {
+            "name": "/dir1/dir11/file12", 
+            "gid": 0, 
+            "mode": 33188, 
+            "se_linux_label": "-", 
+            "uid": 0, 
+            "link_target": "", 
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 
+            "size": 0
+        }, 
+        {
+            "name": "/dir2/file22", 
+            "gid": 1002, 
+            "mode": 33188, 
+            "se_linux_label": "-", 
+            "uid": 1002, 
+            "link_target": "", 
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 
+            "size": 0
+        }, 
+        {
+            "name": "/dir3/file32", 
+            "gid": 1001, 
+            "mode": 33188, 
+            "se_linux_label": "-", 
+            "uid": 1001, 
+            "link_target": "", 
+            "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 
+            "size": 0
+        }
+    ], 
+    "image_name": "test/test.img", 
+    "image_digest": "9d5fd9acc98421b46976f283175cc438cf549bb0607a1bca6e881d3e7f323794"
+}

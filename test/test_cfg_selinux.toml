@@ -1,0 +1,10 @@
+
+# test with NEW e2tools with selinux support
+
+[GlobalConfig]
+FsType = "extfs"
+FsTypeOptions = "selinux"
+DigestImage = true
+
+# load actual config
+[Include."test/test_cfg.base.toml"]

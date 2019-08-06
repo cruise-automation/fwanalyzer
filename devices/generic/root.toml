@@ -1,0 +1,70 @@
+# -- Basic Config for a generic Linux device --
+
+[GlobalConfig]
+FsType = "extfs"
+DigestImage = true
+
+[GlobalFileChecks]
+Suid = true
+SuidWhiteList = []
+# disable SELinux checks
+SeLinuxLabel = false
+# flag world writable files
+WorldWrite = true
+# UIDs and GIDs need to be adjusted for each device
+Uids = [0]
+Gids = [0]
+# files we do not want in the filesystem
+BadFiles = [ "/usr/sbin/sshd", "/usr/sbin/tcpdump" ]
+
+[FileTreeCheck]
+OldTreeFilePath = "root_filetree.json"
+CheckPermsOwnerChange = true
+
+# -- root should own all binaries --
+
+[FilePathOwner."/bin"]
+Uid = 0
+Gid = 0
+
+[FilePathOwner."/sbin"]
+Uid = 0
+Gid = 0
+
+[FilePathOwner."/usr/bin"]
+Uid = 0
+Gid = 0
+
+[FilePathOwner."/usr/sbin"]
+Uid = 0
+Gid = 0
+
+# -- check that elf files are stripped --
+
+[FileContent.bins_stripped]
+File = "/"
+Script = "check_file_elf_stripped.sh"
+Desc = "elf file not stripped"
+
+# -- check mount flags --
+# Note: adjust the device and mount point, example uses: /dev/sda1 at /mnt
+
+[FileContent."mount_flag_noexec"]
+File = "/etc/fstab"
+RegEx = ".*\\n/dev/sda1[\\t ]+/mnt[\\t ]+ext4[\\t a-z,]+noexec.*\\n.*"
+Desc = "sda1 should be mounted noexec"
+
+[FileContent."mount_flag_ro"]
+File = "/etc/fstab"
+RegEx = ".*\\n/dev/sda1[\\t ]+/mnt[\\t ]+ext4[\\t a-z,]+ro.*\\n.*"
+Desc = "sda1 should be mounted ro"
+
+[FileContent."mount_flag_nodev"]
+File = "/etc/fstab"
+RegEx = ".*\\n/dev/sda1[\\t ]+/mnt[\\t ]+ext4[\\t a-z,]+nodev.*\\n.*"
+Desc = "sda1 should be mounted nodev"
+
+[FileContent."mount_flag_nosuid"]
+File = "/etc/fstab"
+RegEx = ".*\\n/dev/sda1[\\t ]+/mnt[\\t ]+vfat[ \\ta-z,]+nosuid.*\\n.*"
+Desc = "sda1 should be mounted nosuid"

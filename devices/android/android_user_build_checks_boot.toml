@@ -1,0 +1,29 @@
+# -- Android user build checks --
+# 
+# Basic checks for a production build
+# checks cover: boot.img
+
+[FileContent."selinux enforcement"]
+File = "/boot_img/img_info"
+Regex = ".*androidboot.selinux=enforcing.*"
+Desc = "selinux must be set to enforcing"
+
+[FileContent."buildvariant must be user"]
+File = "/boot_img/img_info"
+Regex = ".*buildvariant=user.*"
+Desc = "build variant must be 'user'"
+
+[FileContent."veritykeyid should make sense"]
+File = "/boot_img/img_info"
+Regex = ".*veritykeyid=id:[[:alnum:]]+.*"
+Desc = "veritykeyid must be present"
+
+[FileContent."ro.secure=1 (ramdisk)"]
+File = "/boot_img/ramdisk/prop.default"
+Regex = ".*\\nro.secure=1\\n.*"
+Desc = "ro.secure must be 1"
+
+[FileContent."ro.debuggable=0 (ramdisk)"]
+File = "/boot_img/ramdisk/prop.default"
+Regex = ".*\\nro.debuggable=0\\n.*"
+Desc = "ro.debuggable must be 0"

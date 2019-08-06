@@ -1,0 +1,134 @@
+
+# -- Android Properties --
+
+# - /system/etc/prop.default -
+
+[DataExtract."ro.debuggable__1"]
+File = "/system/etc/prop.default"
+RegEx = ".*\\nro\\.debuggable=(.+)\\n.*"
+
+[DataExtract."ro.bootimage.build.fingerprint__1"]
+File = "/system/etc/prop.default"
+RegEx = ".*\\nro\\.bootimage\\.build\\.fingerprint=(\\S+)\\n.*"
+
+[DataExtract."ro.bootimage.build.date__1"]
+File = "/system/etc/prop.default"
+RegEx = ".*\\nro\\.bootimage\\.build\\.date=(.+)\\n.*"
+
+# - /system/build.prop -
+
+[DataExtract."ro.build.type__1"]
+File = "/system/build.prop"
+RegEx = ".*\\nro\\.build\\.type=(\\S+)\\n.*"
+
+[DataExtract."ro.build.tags__1"]
+File = "/system/build.prop"
+RegEx = ".*\\nro\\.build\\.tags=(\\S+)\\n.*"
+
+[DataExtract."ro.build.flavor__1"]
+File = "/system/build.prop"
+RegEx = ".*\\nro\\.build\\.flavor=(\\S+)\\n.*"
+
+[DataExtract."ro.build.id__1"]
+File = "/system/build.prop"
+RegEx = ".*\\nro\\.build\\.id=(\\S+)\\n.*"
+
+[DataExtract."ro.build.version.security_patch__1"]
+File = "/system/build.prop"
+RegEx = ".*\\nro\\.build\\.version\\.security_patch=(\\S+)\\n.*"
+
+[DataExtract."ro.build.version.incremental__1"]
+File = "/system/build.prop"
+RegEx = ".*\\nro\\.build\\.version\\.incremental=(\\S+)\\n.*"
+
+[DataExtract."ro.product.name__1"]
+File = "/system/build.prop"
+RegEx = ".*\\nro\\.product\\.name=(\\S+)\\n.*"
+
+[DataExtract."ro.product.device__1"]
+File = "/system/build.prop"
+RegEx = ".*\\nro\\.product\\.device=(\\S+)\\n.*"
+
+[DataExtract."ro.build.version.codename__1"]
+File = "/system/build.prop"
+RegEx = ".*\\nro\\.build\\.version\\.codename=(\\S+)\\n.*"
+
+[DataExtract."ro.build.version.release__1"]
+File = "/system/build.prop"
+RegEx = ".*\\nro\\.build\\.version\\.release=(\\S+)\\n.*"
+
+[DataExtract."ro.build.date__1"]
+File = "/system/build.prop"
+RegEx = ".*\\nro\\.build\\.date=(.+)\\n.*"
+
+# - /boot_img/ramdisk/prop.default (from the boot image) -
+
+[DataExtract."ro.bootimage.build.fingerprint__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.bootimage\\.build\\.fingerprint=(\\S+)\\n.*"
+
+[DataExtract."ro.bootimage.build.date__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.bootimage\\.build\\.date=(.+)\\n.*"
+
+[DataExtract."ro.build.type__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.build\\.type=(\\S+)\\n.*"
+
+[DataExtract."ro.build.tags__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.build\\.tags=(\\S+)\\n.*"
+
+[DataExtract."ro.build.flavor__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.build\\.flavor=(\\S+)\\n.*"
+
+[DataExtract."ro.build.id__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.build\\.id=(\\S+)\\n.*"
+
+[DataExtract."ro.build.version.security_patch__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.build\\.version\\.security_patch=(\\S+)\\n.*"
+
+[DataExtract."ro.build.version.incremental__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.build\\.version\\.incremental=(\\S+)\\n.*"
+
+[DataExtract."ro.product.name__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.product\\.name=(\\S+)\\n.*"
+
+[DataExtract."ro.product.device__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.product\\.device=(\\S+)\\n.*"
+
+[DataExtract."ro.build.version.codename__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.build\\.version\\.codename=(\\S+)\\n.*"
+
+[DataExtract."ro.build.version.release__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.build\\.version\\.release=(\\S+)\\n.*"
+
+[DataExtract."ro.build.date__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.build\\.date=(.+)\\n.*"
+
+[DataExtract."ro.debuggable__2"]
+File = "/boot_img/ramdisk/prop.default"
+RegEx = ".*\\nro\\.debuggable=(.+)\\n.*"
+
+# -- Android Boot Partition Info --
+
+[DataExtract."androidboot.selinux__1"]
+File = "/boot_img/img_info"
+RegEx = ".*androidboot.selinux=(\\S+)\\s.*"
+
+[DataExtract."buildvariant__1"]
+File = "/boot_img/img_info"
+RegEx = ".*buildvariant=(\\S+)\\s.*"
+
+[DataExtract."veritykeyid__1"]
+File = "/boot_img/img_info"
+RegEx = ".*veritykeyid=id:(\\w+).*"

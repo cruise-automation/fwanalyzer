@@ -1,0 +1,88 @@
+
+# all checks for the integration test
+
+[GlobalFileChecks]
+Suid = true
+SuidWhiteList = []
+SeLinuxLabel = false
+WorldWrite = true
+Uids = [0,1001,1002]
+Gids = [0,1001,1002]
+BadFiles = ["/file99", "*1"]
+
+[FileTreeCheck]
+OldTreeFilePath = "oldtree.json"
+CheckPath = ["/"]
+CheckPermsOwnerChange = true
+CheckFileSize         = true
+CheckFileDigest       = true
+
+[FilePathOwner."/dir2"]
+Uid = 0
+Gid = 0
+
+[FilePathOwner."/dir3"]
+Uid = 1001
+Gid = 1001
+
+[FileStatCheck."/file2"]
+AllowEmpty = true
+Uid = 123
+Gid = 0
+Mode = "100123"
+Desc = "this needs to be this way"
+
+[FileStatCheck."/dir2/file22"]
+AllowEmpty = true
+Desc = "this needs to be this way"
+
+[FileStatCheck."/ver"]
+AllowEmpty = false
+Uid = -1
+Gid = -1
+Mode = ""
+Desc = "this needs to be this way"
+
+[FileStatCheck."/file1"]
+AllowEmpty = false
+Uid = -1
+Gid = -1
+Mode = ""
+Desc = "this needs to be this way"
+
+[FileContent."ensure all elf files are x86 64bit"]
+File = "/bin"
+Script="check_file_x8664.sh"
+
+[FileContent."ensure bins are stripped"]
+File = "/"
+Script="check_file_elf_stripped.sh"
+
+[FileContent."date1 needs to be specific"]
+File = "/date1"
+Digest="8b15095ed1af38d5e383af1c4eadc5ae73cab03964142eb54cb0477ccd6a8dd5"
+
+[FileContent."ver needs to be specific"]
+File = "/ver"
+Digest="8b15095ed1af38d5e383af1c4eadc5ae73cab03964142eb54cb0477ccd6a8dd4"
+
+[FileContent."version check"]
+File = "/ver"
+Regex= ".*version=1.2.3.*"
+Match = false
+
+[DirContent."/dir1"]
+Allowed=["dir11", "file11"]
+Required=["nofile"]
+
+[DirContent."/dir2"]
+Allowed=["file?1"]
+Required=["file21"]
+
+[DataExtract."Version"]
+File = "/ver"
+RegEx = "^version=(\\S+)\\n.*"
+
+[DataExtract."date1_file"]
+File = "/date1"
+Script = "catfile.sh"

@@ -1,5 +1,8 @@
 # FwAnalyzer (Firmware Analyzer)
 
+[![CircleCI](https://circleci.com/gh/cruise-automation/fwanalyzer.svg?style=shield)](https://circleci.com/gh/cruise-automation/fwanalyzer)
+
+
 FwAnalyzer is a tool to analyze (ext2/3/4), FAT/VFat, SquashFS, UBIFS filesystem images,
 and directory content using a set of configurable rules.
 FwAnalyzer relies on [e2tools](https://github.com/crmulliner/e2tools/) for ext filesystems,

@@ -1,0 +1,29 @@
+version: 2
+
+jobs:
+  test:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - checkout
+      - run: docker-compose build fwanalyzer
+      - run: docker-compose run --rm fwanalyzer make deps 
+      - run: docker-compose run --rm fwanalyzer make test
+
+  deploy:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - checkout
+      - run: docker-compose build fwanalyzer
+      - run: docker-compose run --rm fwanalyzer make deps 
+      - run: docker-compose run --rm fwanalyzer make
+
+workflows:
+  version: 2
+  test-deploy:
+    jobs:
+      - test
+      - deploy:
+          requires:
+            - test

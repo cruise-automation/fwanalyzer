@@ -66,12 +66,12 @@ type globalConfigType struct {
 }
 
 type AnalyzerReport struct {
-	FSType        string                 `json:"fs_type"`
-	ImageName     string                 `json:"image_name"`
-	ImageDigest   string                 `json:"image_digest,omitempty"`
-	Data          map[string]interface{} `json:"data,omitempty"`
-	Offenders     map[string][]string    `json:"offenders,omitempty"`
-	Informational map[string][]string    `json:"informational,omitempty"`
+	FSType        string                   `json:"fs_type"`
+	ImageName     string                   `json:"image_name"`
+	ImageDigest   string                   `json:"image_digest,omitempty"`
+	Data          map[string]interface{}   `json:"data,omitempty"`
+	Offenders     map[string][]interface{} `json:"offenders,omitempty"`
+	Informational map[string][]interface{} `json:"informational,omitempty"`
 }
 
 type Analyzer struct {
@@ -90,8 +90,8 @@ func New(fsp fsparser.FsParser, cfg globalConfigType) *Analyzer {
 	a.FSType = cfg.FSType
 	a.ImageName = fsp.ImageName()
 	a.tmpdir, _ = util.MkTmpDir("analyzer")
-	a.Offenders = make(map[string][]string)
-	a.Informational = make(map[string][]string)
+	a.Offenders = make(map[string][]interface{})
+	a.Informational = make(map[string][]interface{})
 	a.Data = make(map[string]interface{})
 	a.PluginReports = make(map[string]interface{})
 
@@ -288,11 +288,27 @@ func (a *Analyzer) CheckAllFilesWithPath(cb AllFilesCallback, cbdata AllFilesCal
 }
 
 func (a *Analyzer) AddOffender(filepath string, reason string) {
-	a.Offenders[filepath] = append(a.Offenders[filepath], reason)
+	var data map[string]interface{}
+	// this is valid json?
+	if err := json.Unmarshal([]byte(reason), &data); err == nil {
+		// yes: store as json
+		a.Offenders[filepath] = append(a.Offenders[filepath], json.RawMessage(reason))
+	} else {
+		// no: store as plain text
+		a.Offenders[filepath] = append(a.Offenders[filepath], reason)
+	}
 }
 
 func (a *Analyzer) AddInformational(filepath string, reason string) {
-	a.Informational[filepath] = append(a.Informational[filepath], reason)
+	var data map[string]interface{}
+	// this is valid json?
+	if err := json.Unmarshal([]byte(reason), &data); err == nil {
+		// yes: store as json
+		a.Informational[filepath] = append(a.Informational[filepath], json.RawMessage(reason))
+	} else {
+		// no: store as plain text
+		a.Informational[filepath] = append(a.Informational[filepath], reason)
+	}
 }
 
 func (a *Analyzer) HasOffenders() bool {

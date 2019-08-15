@@ -10,5 +10,5 @@ ORIG_SELINUXLABEL=$6
 INFO=$(file ${FILEPATH}|grep "ELF 64-bit LSB  executable, x86-64")
 
 if [ -z "$INFO" ]; then
-    echo -n ${ORIG_FILENAME} "not a x86-64 elf file"
+    echo -n '{"reason": "not a x86-64 elf file"}'
 fi

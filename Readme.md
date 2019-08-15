@@ -260,11 +260,11 @@ Example Output:
 #### Example: Run an external script passing the filename to the script
 
 The file is extracted into a temp directory with a temp name before the script is executed.
-The check fails if the script produced output on standard out.
+The check produces an offender if the script produced output on stdout or stderr.
 
 - `File` : string, the full path of the file or directory
 - `Script` : string, the full path of the script
-- `ScriptOptions` : string array, (optional) the first element allows to define a pattern containing wildcards like `?`, `*`, and `**` that is applied to filenames if present it will only check files that match the pattern, this is mostly useful when running the script on a directory. The second element allows passing an argument to the script.
+- `ScriptOptions` : string array, (optional) the first element allows to define a pattern containing wildcards like `?`, `*`, and `**` that is applied to filenames if present it will only check files that match the pattern, this is mostly useful when running the script on a directory. The second element allows passing arguments to the script.
 - `File` : string, the full path of the file, if the path points to a directory the script is run for every file in the directory and subdirectories
 
 - `Desc` : string, (optional) is a descriptive string that will be attached to failed check

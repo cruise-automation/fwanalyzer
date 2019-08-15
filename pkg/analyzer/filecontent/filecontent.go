@@ -266,6 +266,8 @@ type callbackDataType struct {
  * be analyzed by the script. This is to speed up execution time since files have to be extracted
  * to analyze them with the external script.
  *
+ * The second element in scriptOptions will be passed to the script as cmd line arguments.
+ *
  * The script is run with the following parameters:
  * script.sh <filename> <filename in filesystem> <uid> <gid> <mode> <selinux label - can be empty> -- <ScriptOptions[1]>
  */
@@ -296,7 +298,7 @@ func checkFileScript(fi *fsparser.FileInfo, fullpath string, cbData analyzer.All
 		args = append(args, cbd.scriptOptions[1])
 	}
 
-	out, err := exec.Command(cbd.script, args...).Output()
+	out, err := exec.Command(cbd.script, args...).CombinedOutput()
 	if err != nil {
 		cbd.state.a.AddOffender(path.Join(fullpath, fi.Name), fmt.Sprintf("script(%s) error=%s", cbd.script, err))
 	}
@@ -308,9 +310,9 @@ func checkFileScript(fi *fsparser.FileInfo, fullpath string, cbData analyzer.All
 
 	if len(out) > 0 {
 		if cbd.informationalOnly {
-			cbd.state.a.AddInformational(path.Join(fullpath, fi.Name), fmt.Sprintf("script(%s) returned=%s", cbd.script, out))
+			cbd.state.a.AddInformational(path.Join(fullpath, fi.Name), string(out))
 		} else {
-			cbd.state.a.AddOffender(path.Join(fullpath, fi.Name), fmt.Sprintf("script(%s) returned=%s", cbd.script, out))
+			cbd.state.a.AddOffender(path.Join(fullpath, fi.Name), string(out))
 		}
 	}
 }

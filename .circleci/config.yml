@@ -10,7 +10,7 @@ jobs:
       - run: docker-compose run --rm fwanalyzer make deps 
       - run: docker-compose run --rm fwanalyzer make test
 
-  deploy:
+  build:
     machine:
       docker_layer_caching: true
     steps:
@@ -21,9 +21,9 @@ jobs:
 
 workflows:
   version: 2
-  test-deploy:
+  test-build:
     jobs:
       - test
-      - deploy:
+      - build:
           requires:
             - test

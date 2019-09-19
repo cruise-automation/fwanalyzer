@@ -132,7 +132,7 @@ func (state *filePermsType) CheckFile(fi *fsparser.FileInfo, fpath string) error
 
 	for item := range state.config.BadFiles {
 		fullpath := fi.Name
-		// match the fullpath
+		// match the fullpath if it starts with "/"
 		if item[0] == '/' {
 			fullpath = path.Join(fpath, fi.Name)
 		}
@@ -147,9 +147,9 @@ func (state *filePermsType) CheckFile(fi *fsparser.FileInfo, fpath string) error
 			}
 
 			if state.config.BadFilesInformationalOnly {
-				state.a.AddInformational(path.Join(fpath, fullpath), msg)
+				state.a.AddInformational(path.Join(fpath, fi.Name), msg)
 			} else {
-				state.a.AddOffender(path.Join(fpath, fullpath), msg)
+				state.a.AddOffender(path.Join(fpath, fi.Name), msg)
 			}
 		}
 	}

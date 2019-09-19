@@ -8,7 +8,7 @@ SeLinuxLabel = false
 WorldWrite = true
 Uids = [0,1001,1002]
 Gids = [0,1001,1002]
-BadFiles = ["/file99", "*1"]
+BadFiles = ["/file99", "*1", "/bin/elf_x8664"]
 
 [FileTreeCheck]
 OldTreeFilePath = "oldtree.json"

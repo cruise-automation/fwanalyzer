@@ -456,7 +456,7 @@ FsType = "dirfs"
 
 [DataExtract."jsonfile.json"]
 File = "/jsonfile.json"
-RegEx = "(.*)"
+RegEx = "(.*)\\n"
 `
 	analyzer := analyzer.NewFromConfig("../../../test/testdir", cfg)
 	analyzer.AddAnalyzerPlugin(New(string(cfg), analyzer))

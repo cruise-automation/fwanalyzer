@@ -17,6 +17,7 @@ limitations under the License.
 package dataextract
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os/exec"
@@ -128,8 +129,21 @@ func (state *dataExtractType) CheckFile(fi *fsparser.FileInfo, filepath string) 
 			if len(res) < 1 {
 				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: regex match error, regex: %s : %s : %s", item.RegEx, item.Name, item.Desc))
 			} else {
-				if len(res[0]) == 2 {
+				// only one match
+				if len(res) == 1 && len(res[0]) == 2 {
 					state.a.AddData(item.Name, res[0][1])
+					nameFilled[item.Name] = true
+				} else if len(res) > 1 {
+					// multiple matches
+					data := []string{}
+					for _, i := range res {
+						if len(i) == 2 {
+							data = append(data, i[1])
+						}
+					}
+					// convert to JSON arrary
+					jdata, _ := json.Marshal(data)
+					state.a.AddData(item.Name, string(jdata))
 					nameFilled[item.Name] = true
 				} else {
 					state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: regex match error : %s : %s", item.Name, item.Desc))

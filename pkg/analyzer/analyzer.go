@@ -316,9 +316,17 @@ func (a *Analyzer) HasOffenders() bool {
 }
 
 func (a *Analyzer) AddData(key string, value string) {
+	// this is a valid json object?
 	var data map[string]interface{}
-	// this is valid json?
 	if err := json.Unmarshal([]byte(value), &data); err == nil {
+		// yes: store as json
+		a.Data[key] = json.RawMessage(value)
+		return
+	}
+
+	// this is valid json array?
+	var array []interface{}
+	if err := json.Unmarshal([]byte(value), &array); err == nil {
 		// yes: store as json
 		a.Data[key] = json.RawMessage(value)
 	} else {

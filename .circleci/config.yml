@@ -1,23 +1,23 @@
 version: 2
 
 jobs:
-  test:
-    machine:
-      docker_layer_caching: true
-    steps:
-      - checkout
-      - run: docker-compose build fwanalyzer
-      - run: docker-compose run --rm fwanalyzer make deps 
-      - run: docker-compose run --rm fwanalyzer make test
-
   build:
     machine:
-      docker_layer_caching: true
+      docker_layer_caching: false
     steps:
       - checkout
       - run: docker-compose build fwanalyzer
       - run: docker-compose run --rm fwanalyzer make deps 
       - run: docker-compose run --rm fwanalyzer make
+
+  test:
+    machine:
+      docker_layer_caching: false
+    steps:
+      - checkout
+      - run: docker-compose build fwanalyzer
+      - run: docker-compose run --rm fwanalyzer make deps 
+      - run: docker-compose run --rm fwanalyzer make test
 
 workflows:
   version: 2

@@ -294,39 +294,6 @@ Example Output:
 }
 ```
 
-### File Compare Check
-
-The `FileCmp` (File Compare) check is a mechanism to compare a file from a previous 
-run with the file from the current run. The main idea behind this check is to provide
-more insights into file changes, since it allows comparing two versions of a file rather than
-comparing only a digest.
-
-This works by saving the file as the `OldFilePath` 
-(if it does not exist) and skipping the check at the first run. In consecutive runs
-the current file and the saved old file will be copied to a temp directory. The script will
-be executed passing the original filename, the path to the old file and the path to the current file
-as arguments. If the script prints output the check will be marked as failed.
-
-- `File` : string, the full path of the file
-- `Script`: string, path to the script
-- `ScriptOptions`: string, argument passed to the script
-- `OldFilePath`: string, filename (absolute or relative) to use to store old file
-- `InformationalOnly` : bool, (optional) the result of the check will be Informational only (default: false)
-
-Script runs as:
-```sh
-script.sh <OrigFilename> <oldFile> <newFile> -- <argument>
-```
-
-Example:
-```toml
-[FileCmp."test.txt"]
-File = "/test.txt"
-Script = "diff.sh"
-OldFilePath = "test.txt"
-InformationalOnly = true
-```
-
 #### Json Field Compare
 
 - `File` : string, the full path of the file
@@ -359,6 +326,39 @@ Example Output:
 "offenders": {
   "/system.json": [ "Json field System.Arch = arm32 did not match = arm64, System.Arch, arch test" ],
 }
+```
+
+### File Compare Check
+
+The `FileCmp` (File Compare) check is a mechanism to compare a file from a previous 
+run with the file from the current run. The main idea behind this check is to provide
+more insights into file changes, since it allows comparing two versions of a file rather than
+comparing only a digest.
+
+This works by saving the file as the `OldFilePath` 
+(if it does not exist) and skipping the check at the first run. In consecutive runs
+the current file and the saved old file will be copied to a temp directory. The script will
+be executed passing the original filename, the path to the old file and the path to the current file
+as arguments. If the script prints output the check will be marked as failed.
+
+- `File` : string, the full path of the file
+- `Script`: string, path to the script
+- `ScriptOptions`: string, argument passed to the script
+- `OldFilePath`: string, filename (absolute or relative) to use to store old file
+- `InformationalOnly` : bool, (optional) the result of the check will be Informational only (default: false)
+
+Script runs as:
+```sh
+script.sh <OrigFilename> <oldFile> <newFile> -- <argument>
+```
+
+Example:
+```toml
+[FileCmp."test.txt"]
+File = "/test.txt"
+Script = "diff.sh"
+OldFilePath = "test.txt"
+InformationalOnly = true
 ```
 
 ### File Tree Check

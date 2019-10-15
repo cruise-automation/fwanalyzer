@@ -16,7 +16,7 @@ build:
 test: lint build
 	gunzip -c test/test.img.gz >test/test.img
 	gunzip -c test/ubifs.img.gz >test/ubifs.img
-	go test -count=3 -cover ./...
+	PATH=$(PATH):`pwd`/scripts go test -count=3 -cover ./...
 	PATH=./test:$(PATH):./scripts:./build ./test/test.py
 
 

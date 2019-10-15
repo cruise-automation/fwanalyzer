@@ -29,6 +29,7 @@ import (
 	"github.com/cruise-automation/fwanalyzer/pkg/analyzer"
 	"github.com/cruise-automation/fwanalyzer/pkg/analyzer/dataextract"
 	"github.com/cruise-automation/fwanalyzer/pkg/analyzer/dircontent"
+	"github.com/cruise-automation/fwanalyzer/pkg/analyzer/filecmp"
 	"github.com/cruise-automation/fwanalyzer/pkg/analyzer/filecontent"
 	"github.com/cruise-automation/fwanalyzer/pkg/analyzer/filepathowner"
 	"github.com/cruise-automation/fwanalyzer/pkg/analyzer/filestatcheck"
@@ -90,7 +91,7 @@ func main() {
 	var cfgpath arrayFlags
 	var in = flag.String("in", "", "filesystem image file or path to directory")
 	var out = flag.String("out", "-", "output to file (use - for stdout)")
-	var tree = flag.String("tree", "", "overwrite directory to read the filetree file from")
+	var extra = flag.String("extra", "", "overwrite directory to read extra data from (filetree, cmpfile, ...)")
 	var cfg = flag.String("cfg", "", "config file")
 	flag.Var(&cfgpath, "cfgpath", "path to config file and included files (can be repated)")
 	var errorExit = flag.Bool("ee", false, "exit with error if offenders are present")
@@ -109,9 +110,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	// if no alternative filetree directory is given use the directory "config filepath"
-	if *tree == "" {
-		*tree = path.Dir(*cfg)
+	// if no alternative extra data directory is given use the directory "config filepath"
+	if *extra == "" {
+		*extra = path.Dir(*cfg)
 	}
 
 	analyzer := analyzer.NewFromConfig(*in, string(cfgdata))
@@ -124,11 +125,12 @@ func main() {
 
 	analyzer.AddAnalyzerPlugin(globalfilechecks.New(string(cfgdata), analyzer))
 	analyzer.AddAnalyzerPlugin(filecontent.New(string(cfgdata), analyzer, *invertMatch))
+	analyzer.AddAnalyzerPlugin(filecmp.New(string(cfgdata), analyzer, *extra))
 	analyzer.AddAnalyzerPlugin(dataextract.New(string(cfgdata), analyzer))
 	analyzer.AddAnalyzerPlugin(dircontent.New(string(cfgdata), analyzer))
 	analyzer.AddAnalyzerPlugin(filestatcheck.New(string(cfgdata), analyzer))
 	analyzer.AddAnalyzerPlugin(filepathowner.New(string(cfgdata), analyzer))
-	analyzer.AddAnalyzerPlugin(filetree.New(string(cfgdata), analyzer, *tree))
+	analyzer.AddAnalyzerPlugin(filetree.New(string(cfgdata), analyzer, *extra))
 
 	analyzer.RunPlugins()
 

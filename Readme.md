@@ -65,7 +65,7 @@ Command line options
 - `-cfgpath`     : string, path to config file and included files (can be repated)
 - `-in`          : string, filesystem image file or path to directory
 - `-out`         : string, output report to file or stdout using '-'
-- `-tree`        : string, overwrite directory to read the filetree file from
+- `-extra`       : string, overwrite directory to read extra data from (e.g. filetree, filecmp)
 - `-ee`          : exit with error if offenders are present
 - `-invertMatch` : invert regex matches (for testing)
 
@@ -294,6 +294,39 @@ Example Output:
 }
 ```
 
+### File Compare Check
+
+The `FileCmp` (File Compare) check is a mechanism to compare a file from a previous 
+run with the file from the current run. The main idea behind this check is to provide
+more insights into file changes, since it allows comparing two versions of a file rather than
+comparing only a digest.
+
+This works by saving the file as the `OldFilePath` 
+(if it does not exist) and skipping the check at the first run. In consecutive runs
+the current file and the saved old file will be copied to a temp directory. The script will
+be executed passing the original filename, the path to the old file and the path to the current file
+as arguments. If the script prints output the check will be marked as failed.
+
+- `File` : string, the full path of the file
+- `Script`: string, path to the script
+- `ScriptOptions`: string, argument passed to the script
+- `OldFilePath`: string, filename (absolute or relative) to use to store old file
+- `InformationalOnly` : bool, (optional) the result of the check will be Informational only (default: false)
+
+Script runs as:
+```sh
+script.sh <OrigFilename> <oldFile> <newFile> -- <argument>
+```
+
+Example:
+```toml
+[FileCmp."test.txt"]
+File = "/test.txt"
+Script = "diff.sh"
+OldFilePath = "test.txt"
+InformationalOnly = true
+```
+
 #### Json Field Compare
 
 - `File` : string, the full path of the file
@@ -338,7 +371,7 @@ The `FileTree` check generates a full filesystem tree (a list of every file and 
 the newly generated filetree file is OldFileTreePath with ".new" appeneded to it.
 
 The `OldFileTreePath` is relative to the configuration file. This means for '-cfg testdir/test.toml' with OldTreeFilePath = "test.json" fwanalyzer will
-try to read 'testdir/test.json'. The `-tree` command line option can be used to overwrite the path: '-cfg testdir/test.toml -tree test1' will try to
+try to read 'testdir/test.json'. The `-extra` command line option can be used to overwrite the path: '-cfg testdir/test.toml -extra test1' will try to
 read 'test1/test.json'. Similar the newly generated filetree file will be stored in the same directory.
 
 File modification check can be customized with:

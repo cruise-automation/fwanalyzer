@@ -8,7 +8,7 @@ all: build
 
 .PHONY: build
 build:
-	dep check
+	go mod verify
 	mkdir -p build
 	GOOS=$(GOOS) go build -a -ldflags '-w -s' -o build/fwanalyzer ./cmd/fwanalyzer
 
@@ -19,6 +19,10 @@ test: lint build
 	PATH=$(PATH):`pwd`/scripts go test -count=3 -cover ./...
 	PATH=./test:$(PATH):./scripts:./build ./test/test.py
 
+
+.PHONY: modules
+modules:
+	go mod tidy
 
 .PHONY: lint
 lint:
@@ -37,4 +41,4 @@ distclean: clean
 
 .PHONY: deps
 deps:
-	dep ensure
+	go mod download

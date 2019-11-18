@@ -232,11 +232,13 @@ func (state *fileTreeType) Finalize() string {
 		}
 	}
 
+	treeUpdated := false
 	if len(added) > 0 || len(removed) > 0 || (len(changed) > 0 && state.config.CheckPermsOwnerChange) {
 		err := state.saveTree()
 		if err != nil {
 			panic("saveTree failed")
 		}
+		treeUpdated = true
 	}
 
 	for _, fi := range added {
@@ -259,9 +261,14 @@ func (state *fileTreeType) Finalize() string {
 	if state.config.OldTreeFilePath != "" {
 		type reportData struct {
 			OldFileTreePath     string `json:"old_file_tree_path"`
-			CurrentFileTreePath string `json:"current_file_tree_path"`
+			CurrentFileTreePath string `json:"current_file_tree_path,omitempty"`
 		}
-		data := reportData{state.config.OldTreeFilePath, state.config.OldTreeFilePath + newFileTreeExt}
+		newPath := ""
+		if treeUpdated {
+			newPath = state.config.OldTreeFilePath + newFileTreeExt
+		}
+
+		data := reportData{state.config.OldTreeFilePath, newPath}
 		jdata, _ := json.Marshal(&data)
 		return string(jdata)
 	}

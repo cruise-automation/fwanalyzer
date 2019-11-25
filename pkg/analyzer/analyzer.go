@@ -28,6 +28,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 
+	"github.com/cruise-automation/fwanalyzer/pkg/cpioparser"
 	"github.com/cruise-automation/fwanalyzer/pkg/dirparser"
 	"github.com/cruise-automation/fwanalyzer/pkg/extparser"
 	"github.com/cruise-automation/fwanalyzer/pkg/fsparser"
@@ -125,6 +126,8 @@ func NewFromConfig(imagepath string, cfgdata string) *Analyzer {
 		fsp = squashfsparser.New(imagepath)
 	} else if strings.EqualFold(config.GlobalConfig.FSType, "ubifs") {
 		fsp = ubifsparser.New(imagepath)
+	} else if strings.EqualFold(config.GlobalConfig.FSType, "cpiofs") {
+		fsp = cpioparser.New(imagepath)
 	} else {
 		panic("Cannot find an appropriate parser: " + config.GlobalConfig.FSType)
 	}

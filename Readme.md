@@ -4,11 +4,12 @@
 
 
 FwAnalyzer is a tool to analyze (ext2/3/4), FAT/VFat, SquashFS, UBIFS filesystem images,
-and directory content using a set of configurable rules.
+cpio archives, and directory content using a set of configurable rules.
 FwAnalyzer relies on [e2tools](https://github.com/crmulliner/e2tools/) for ext filesystems,
 [mtools](https://www.gnu.org/software/mtools/) for FAT filesystems,
 [squashfs-tools](https://github.com/plougher/squashfs-tools) for SquashFS filesystems, and
 [ubi_reader](https://github.com/crmulliner/ubi_reader) for UBIFS filesystems.
+[cpio](https://www.gnu.org/software/cpio/) for cpio archives.
 SELinux/xattr support for ext2/3/4 images requires a patched version of [e2tools](https://github.com/crmulliner/e2tools/).
 
 ![fwanalyzer](images/fwanalyzer.png)
@@ -97,6 +98,7 @@ The `FsType` (filesystem type) field selects the backend that is used to access 
 - `squashfs`: to read SquashFS filesystem images (supported FsTypeOptions are: N/A)
 - `ubifs`: to read UBIFS filesystem images (supported FsTypeOptions are: N/A)
 - `vfatfs`: to read VFat filesystem images (supported FsTypeOptions are: N/A)
+- `cpiofs`: to read cpio archives (supported FsTypeOptions are: N/A)
 
 The FsTypeOptions allow tuning of the FsType driver.
 

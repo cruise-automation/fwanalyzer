@@ -305,6 +305,14 @@ func TestGetFileInfo(t *testing.T) {
 		t.Errorf("/ should be dir")
 	}
 
+	dir, err := f.GetDirInfo("/")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(dir) < 1 {
+		t.Errorf("/ should not be empty")
+	}
+
 	fi, err = f.GetFileInfo("/dir2/file3")
 	if err != nil {
 		t.Errorf("GetDirInfo() returned error: %v", err)

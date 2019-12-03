@@ -56,7 +56,18 @@ Script="check_file_x8664.sh"
 
 [FileContent."ensure bins are stripped"]
 File = "/"
+ScriptOptions = ["*"]
 Script="check_file_elf_stripped.sh"
+
+[FileContent."script_test"]
+File = "/file2"
+ScriptOptions = ["*", "script", "test"]
+Script="script_test.sh"
+
+[DataExtract."extract_test"]
+File = "/file2"
+ScriptOptions = ["extract", "test"]
+Script="script_test.sh"
 
 [FileContent."date1 needs to be specific"]
 File = "/date1"

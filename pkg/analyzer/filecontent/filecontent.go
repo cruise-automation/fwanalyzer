@@ -262,14 +262,14 @@ type callbackDataType struct {
  * The script output is used to indicate an issue, the output is saved in the offender record.
  *
  * The first element in scriptOptions (from the callback data) defines a path match string.
- * This allows to specify a pattern the filename has to match. Files with names that do not patch will
- * be analyzed by the script. This is to speed up execution time since files have to be extracted
+ * This allows to specify a pattern the filename has to match. Files with names that do not match will
+ * not be analyzed by the script. This is to speed up execution time since files have to be extracted
  * to analyze them with the external script.
  *
- * The second element in scriptOptions will be passed to the script as cmd line arguments.
+ * The following elements in scriptOptions will be passed to the script as cmd line arguments.
  *
  * The script is run with the following parameters:
- * script.sh <filename> <filename in filesystem> <uid> <gid> <mode> <selinux label - can be empty> -- <ScriptOptions[1]>
+ * script.sh <filename> <filename in filesystem> <uid> <gid> <mode> <selinux label - can be empty> -- <ScriptOptions[1]> <ScriptOptions[2]>
  */
 func checkFileScript(fi *fsparser.FileInfo, fullpath string, cbData analyzer.AllFilesCallbackData) {
 	cbd := cbData.(*callbackDataType)
@@ -293,9 +293,9 @@ func checkFileScript(fi *fsparser.FileInfo, fullpath string, cbData analyzer.All
 
 	fname, _ := cbd.state.a.FileGet(path.Join(fullpath, fi.Name))
 	args := []string{fname, fi.Name, fmt.Sprintf("%d", fi.Uid), fmt.Sprintf("%d", fi.Gid), fmt.Sprintf("%o", fi.Mode), fi.SELinuxLabel}
-	if len(cbd.scriptOptions) >= 2 && len(cbd.scriptOptions[1]) > 0 {
+	if len(cbd.scriptOptions) >= 2 {
 		args = append(args, "--")
-		args = append(args, cbd.scriptOptions[1])
+		args = append(args, cbd.scriptOptions[1:]...)
 	}
 
 	out, err := exec.Command(cbd.script, args...).CombinedOutput()

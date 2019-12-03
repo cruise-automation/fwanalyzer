@@ -34,12 +34,13 @@ import (
 )
 
 type dataType struct {
-	File   string
-	Script string
-	RegEx  string
-	Json   string
-	Desc   string
-	Name   string // the name can be set directly otherwise the key will be used
+	File          string
+	Script        string
+	ScriptOptions []string // options for script execution
+	RegEx         string
+	Json          string
+	Desc          string
+	Name          string // the name can be set directly otherwise the key will be used
 }
 
 type dataExtractType struct {
@@ -152,7 +153,7 @@ func (state *dataExtractType) CheckFile(fi *fsparser.FileInfo, filepath string) 
 		}
 
 		if item.Script != "" {
-			out, err := runScriptOnFile(state.a, item.Script, fi, fn)
+			out, err := runScriptOnFile(state.a, item.Script, item.ScriptOptions, fi, fn)
 			if err != nil {
 				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: script error: %s : %s : %s", err, item.Name, item.Desc))
 			} else {
@@ -186,14 +187,19 @@ func (state *dataExtractType) CheckFile(fi *fsparser.FileInfo, filepath string) 
 	return nil
 }
 
-// runScriptOnFile runs the provided script with the following parameters: <filename> <filename in filesystem> <uid> <gid> <mode> <selinux label - can be empty>
-func runScriptOnFile(a analyzer.AnalyzerType, script string, fi *fsparser.FileInfo, fpath string) (string, error) {
+// runScriptOnFile runs the provided script with the following parameters:
+// <filename> <filename in filesystem> <uid> <gid> <mode> <selinux label - can be empty> -- scriptOptions[0] scriptOptions[1]
+func runScriptOnFile(a analyzer.AnalyzerType, script string, scriptOptions []string, fi *fsparser.FileInfo, fpath string) (string, error) {
 	fname, err := a.FileGet(fpath)
 	if err != nil {
 		return "", err
 	}
-	out, err := exec.Command(script, fname, filepath.Base(fpath),
-		fmt.Sprintf("%d", fi.Uid), fmt.Sprintf("%d", fi.Gid), fmt.Sprintf("%o", fi.Mode), fi.SELinuxLabel).Output()
+	options := []string{fname, filepath.Base(fpath), fmt.Sprintf("%d", fi.Uid), fmt.Sprintf("%d", fi.Gid), fmt.Sprintf("%o", fi.Mode), fi.SELinuxLabel}
+	if len(scriptOptions) > 0 {
+		options = append(options, "--")
+		options = append(options, scriptOptions...)
+	}
+	out, err := exec.Command(script, options...).Output()
 	_ = a.RemoveFile(fname)
 
 	return string(out), err

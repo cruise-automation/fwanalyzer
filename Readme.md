@@ -270,16 +270,16 @@ The check produces an offender if the script produced output on stdout or stderr
 
 - `File` : string, the full path of the file or directory
 - `Script` : string, the full path of the script
-- `ScriptOptions` : string array, (optional) the first element allows to define a pattern containing wildcards like `?`, `*`, and `**` that is applied to filenames if present it will only check files that match the pattern, this is mostly useful when running the script on a directory. The second element allows passing arguments to the script.
+- `ScriptOptions` : string array, (optional) the first element allows to define a pattern containing wildcards like `?`, `*`, and `**` that is applied to filenames if present it will only check files that match the pattern, this is mostly useful when running the script on a directory. Arguments can be passed to the script using the second and following elements.
 - `File` : string, the full path of the file, if the path points to a directory the script is run for every file in the directory and subdirectories
 
 - `Desc` : string, (optional) is a descriptive string that will be attached to failed check
 - `InformationalOnly` : bool, (optional) the result of the check will be Informational only (default: false)
 
-If the `--` is present it indicates that the next argument is from the `ScriptOptions[1]`. The script is run with the following arguments:
+If the `--` is present it indicates that the next argument is from the `ScriptOptions[1..N]`. The script is run with the following arguments:
 
 ```
-<tmp filename> <original filename> <uid> <gid> <mode in octal> <selinux label or "-" for no label> [--] [script options argument]
+<tmp filename> <original filename> <uid> <gid> <mode in octal> <selinux label or "-" for no label> [--] [script argument 1] ... [script argument N]
 ```
 
 Example:
@@ -345,13 +345,13 @@ as arguments. If the script prints output the check will be marked as failed.
 
 - `File` : string, the full path of the file
 - `Script`: string, path to the script
-- `ScriptOptions`: string, argument passed to the script
+- `ScriptOptions`: string array, (optional) arguments passed to the script
 - `OldFilePath`: string, filename (absolute or relative) to use to store old file
 - `InformationalOnly` : bool, (optional) the result of the check will be Informational only (default: false)
 
 Script runs as:
 ```sh
-script.sh <OrigFilename> <oldFile> <newFile> -- <argument>
+script.sh <OrigFilename> <oldFile> <newFile> [--] [argument 1] .. [argument N]
 ```
 
 Example:
@@ -465,6 +465,7 @@ this statement, the example below is named LastLine.
 
 - `File` : string, the full path of the file
 - `Script` :string, the full path of the script
+- `ScriptOptions` : string array (optionl), arguments to pass to the script
 - `Name` : string, (optional) the key name
 
 - `Desc` : string, (optional) description
@@ -472,7 +473,7 @@ this statement, the example below is named LastLine.
 The script is run with the following arguments:
 
 ```
-<tmp filename> <original filename> <uid> <gid> <mode in octal> <selinux label or "-" for no label>
+<tmp filename> <original filename> <uid> <gid> <mode in octal> <selinux label or "-" for no label> [--] [script argument 1] ... [script argument N]
 ```
 
 Example:

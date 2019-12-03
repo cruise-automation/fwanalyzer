@@ -45,28 +45,34 @@ def test(cfgfile, e2toolspath=""):
     if data.get("data", {}).get("Version") != "1.2.3":
         SetError("Data Version")
 
+    if data.get("data", {}).get("extract_test") != "test extract":
+        SetError("extract test")
+
     if "offenders" not in data:
         SetError("offenders")
     else:
-        if "/dir2/file21" not in data["offenders"]:
+        if not "/dir2/file21" in data["offenders"]:
             SetError("dir2/file21")
 
-        if "/dir2/file22" not in data["offenders"]:
+        if not "/dir2/file22" in data["offenders"]:
             SetError("dir2/file22")
 
-        if data["offenders"]["/world"][0].find("WorldWriteable") == -1:
+        if not "File is WorldWriteable, not allowed" in data["offenders"]["/world"]:
             SetError("WorldWriteable")
 
-        if data["offenders"]["/dir2/file21"][0].find("File is SUID") == -1:
+        if not "File is SUID, not allowed" in data["offenders"]["/dir2/file21"]:
             SetError("SUID")
 
-        if data["offenders"]["/dir2/file22"][0].find("DirContent") == -1:
+        if not "DirContent: File file22 not allowed in directory /dir2" in data["offenders"]["/dir2/file22"]:
             SetError("DirContent")
 
-        if "nofile" not in data["offenders"]:
+        if not "nofile" in data["offenders"]:
             SetError("DirContent")
 
-        if data["offenders"]["/ver"][0].find("Digest") == -1:
+        if not "test script" in data["offenders"]["/file2"]:
+            SetError("file2")
+
+        if not "Digest (sha256) did not match found = 44c77e41961f354f515e4081b12619fdb15829660acaa5d7438c66fc3d326df3 should be = 8b15095ed1af38d5e383af1c4eadc5ae73cab03964142eb54cb0477ccd6a8dd4. ver needs to be specific :  " in data["offenders"]["/ver"]:
             SetError("ver digest")
 
         if "File State Check failed: group found 1002 should be 0 : this needs to be this way" in data["offenders"]["/dir2/file22"]:
@@ -78,21 +84,21 @@ def test(cfgfile, e2toolspath=""):
         if not "File State Check failed: size: 0 AllowEmpyt=false : this needs to be this way" in data["offenders"]["/file1"]:
             SetError("file1 exists but size 0")
 
-        if "elf_x8664 is not stripped" not in data["offenders"]["/bin/elf_x8664"]:
+        if not "elf_x8664 is not stripped" in data["offenders"]["/bin/elf_x8664"]:
             SetError("script failed")
 
-    if "informational" not in data:
+    if not "informational" in data:
         SetError("informational")
     else:
-        if "/file1" not in data["informational"]:
+        if not "/file1" in data["informational"]:
             SetError("/file1")
         else:
-            if "changed" not in data["informational"]["/file1"][0]:
+            if not "changed" in data["informational"]["/file1"][0]:
                 SetError("file1 not changed")
-        if "/date1" not in data["informational"]:
+        if not "/date1" in data["informational"]:
             SetError("/date1")
         else:
-            if "changed" not in data["informational"]["/date1"][0]:
+            if not "changed" in data["informational"]["/date1"][0]:
                 SetError("date1 not changed")
 
 if __name__ == "__main__":

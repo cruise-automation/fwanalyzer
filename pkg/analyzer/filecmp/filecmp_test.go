@@ -65,7 +65,7 @@ func TestCmp(t *testing.T) {
 [FileCmp."Test1"]
 File ="/cmp_test_1"
 Script = "diff.sh"
-ScriptOptions = ""
+ScriptOptions = [""]
 OldFilePath = "/tmp/analyzer_filecmp_1"
 `
 
@@ -157,7 +157,7 @@ func TestCmpInfo(t *testing.T) {
 [FileCmp."Test1"]
 File ="/cmp_test_1"
 Script = "diff.sh"
-ScriptOptions = ""
+ScriptOptions = [""]
 InformationalOnly = true
 OldFilePath = "/tmp/analyzer_filecmp_1"
 `
@@ -220,7 +220,7 @@ func TestCmpNoOld(t *testing.T) {
 [FileCmp."Test1"]
 File ="/cmp_test_1"
 Script = "diff.sh"
-ScriptOptions = ""
+ScriptOptions = [""]
 OldFilePath = "/tmp/analyzer_filecmp_99"
 `
 

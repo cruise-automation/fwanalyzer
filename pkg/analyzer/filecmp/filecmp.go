@@ -35,7 +35,7 @@ type cmpType struct {
 	File              string // filename
 	OldFilePath       string
 	Script            string
-	ScriptOptions     string
+	ScriptOptions     []string
 	InformationalOnly bool   // put result into Informational (not Offenders)
 	name              string // name of this check (need to be unique)
 
@@ -163,7 +163,7 @@ func (state *fileCmpType) CheckFile(fi *fsparser.FileInfo, filepath string) erro
 		args := []string{fi.Name, oldTmp, tmpfn}
 		if len(item.ScriptOptions) > 0 {
 			args = append(args, "--")
-			args = append(args, item.ScriptOptions)
+			args = append(args, item.ScriptOptions...)
 		}
 
 		out, err := exec.Command(item.Script, args...).CombinedOutput()

@@ -274,8 +274,8 @@ type callbackDataType struct {
 func checkFileScript(fi *fsparser.FileInfo, fullpath string, cbData analyzer.AllFilesCallbackData) {
 	cbd := cbData.(*callbackDataType)
 
-	// skip/ignore links
-	if fi.IsLink() {
+	// skip/ignore anything but normal files
+	if !fi.IsFile() {
 		return
 	}
 

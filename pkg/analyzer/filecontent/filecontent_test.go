@@ -64,7 +64,7 @@ func makeFile(data string, fn string) fsparser.FileInfo {
 	if err != nil {
 		panic(err)
 	}
-	return fsparser.FileInfo{Name: fn, Size: 1}
+	return fsparser.FileInfo{Name: fn, Size: 1, Mode: 100666}
 }
 
 func TestRegex(t *testing.T) {

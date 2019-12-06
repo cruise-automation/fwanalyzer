@@ -4,6 +4,8 @@ ifeq ($(GOOS),)
 GOOS := "linux"
 endif
 
+PWD := $(shell pwd)
+
 all: build
 
 .PHONY: build
@@ -16,8 +18,8 @@ build:
 test: lint build
 	gunzip -c test/test.img.gz >test/test.img
 	gunzip -c test/ubifs.img.gz >test/ubifs.img
-	PATH=$(PATH):`pwd`/scripts go test -count=3 -cover ./...
-	PATH=./test:$(PATH):./scripts:./build ./test/test.py
+	PATH=$(PWD)/scripts:$(PWD)/test:$(PATH) go test -count=3 -cover ./...
+	PATH=$(PWD)/scripts:$(PWD)/test:$(PWD)/build:$(PATH) ./test/test.py
 
 
 .PHONY: modules

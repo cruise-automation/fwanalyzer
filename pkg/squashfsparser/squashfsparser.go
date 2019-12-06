@@ -37,7 +37,7 @@ const (
 
 var (
 	// drwxr-xr-x administrator/administrator 66 2019-04-08 18:49 squashfs-root
-	fileLineRegex = regexp.MustCompile(`^([A-Za-z-]+)\s+([-\w]+|\d+)/([-\w]+|\d+)\s+(\d+)\s+(\d+-\d+-\d+)\s+(\d+:\d+)\s+(.*)$`)
+	fileLineRegex = regexp.MustCompile(`^([A-Za-z-]+)\s+([\-\.\w]+|\d+)/([\-\.\w]+|\d+)\s+(\d+)\s+(\d+-\d+-\d+)\s+(\d+:\d+)\s+(.*)$`)
 )
 
 // SquashFSParser parses SquashFS filesystem images.

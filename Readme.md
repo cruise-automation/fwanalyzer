@@ -80,10 +80,12 @@ Example for using custom scripts stored in the `scripts` directory:
 PATH=$PATH:./scripts fwanalyzer -cfg system_fwa.toml -in system.img -out system_check_output.json
 ```
 
-The [devices](devices/) folder contains helper scripts for unpacking and dealing with specific devices types and firmware package formats such as [Android](devices/android).
+The [devices/](devices/) folder contains helper scripts for unpacking and dealing with specific device types and firmware package formats such as [Android](devices/android).
 It also includes general configuration files that can be included in target specific FwAnalyzer configurations.
 
-The [scripts](scripts/) folder contains helper scripts that can be called from FwAnalyzer for file content analysis and data extraction.
+Check.py in the [devices/](devices) folder provides a universal script to effectively use FwAnalyzer, see [devices/Readme.md](devices/Readme.md) for details. This likely is how most people will invoke FwAnalyzer.
+
+The [scripts/](scripts/) folder contains helper scripts that can be called from FwAnalyzer for file content analysis and data extraction.
 
 ## Config Options
 

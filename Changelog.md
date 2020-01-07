@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [v1.3.1] - 2020-01-07
+
+### Fixed
+- report status in _check.py_
+- use quiet flag for _cpiofs_
+
 ## [v1.3.0] - 2020-01-07
 
 ### Added

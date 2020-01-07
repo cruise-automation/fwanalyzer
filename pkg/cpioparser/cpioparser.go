@@ -200,7 +200,7 @@ func (p *CpioParser) loadFileList() error {
 	}
 	p.files = make(map[string][]fsparser.FileInfo)
 
-	out, err := exec.Command("sh", "-c", cpioCmd+" -tvn < "+p.imagepath).CombinedOutput()
+	out, err := exec.Command("sh", "-c", cpioCmd+" -tvn --quiet < "+p.imagepath).CombinedOutput()
 	if err != nil {
 		if err.Error() != errors.New("exit status 2").Error() {
 			fmt.Fprintf(os.Stderr, "getDirList: >%s<", err)

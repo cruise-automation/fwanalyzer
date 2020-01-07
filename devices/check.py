@@ -133,7 +133,7 @@ def make_report(fwfile, data):
     status = True
     for key in data:
         img_status, img_report  = out[key]
-        if not status:
+        if status != False:
             status = img_status
         report[key] = json.loads(img_report)
     report["firmware"] = fwfile

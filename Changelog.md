@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [v1.3.0] - 2020-01-07
+
 ### Added
 - NEW _cpiofs_ for cpio as filesystem
 - NEW universal _check.py_ (so you just need to write a custom unpacker)

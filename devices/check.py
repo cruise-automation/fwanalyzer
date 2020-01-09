@@ -35,8 +35,8 @@ class CheckFirmware:
     def run_fwanalyzer_fs(self, img, cfg, cfginc, out, options=""):
         cfginclude = ""
         if cfginc:
-            cfginclude = " -cfgpath {0}".format(cfginc)
-        cmd = "{0} -in {1} {2} -cfg {3} -out {4} {5}".format(self._fwanalyzer, img, cfginclude, cfg, out, options)
+            cfginclude = " -cfgpath '{0}'".format(cfginc)
+        cmd = "{0} -in '{1}' {2} -cfg '{3}' -out '{4}' {5}".format(self._fwanalyzer, img, cfginclude, cfg, out, options)
         return subprocess.check_call(cmd, shell=True)
 
     def unpack(self, fwfile, unpacker, cfgpath):
@@ -46,13 +46,13 @@ class CheckFirmware:
                 self._tmpdir = fwfile
                 self._unpackdir = os.path.join(self._tmpdir, "unpacked")
                 print("{0}: is a directory containing an 'unpacked' path, skipping".format(fwfile))
-                cmd = "cat {0}".format(os.path.join(fwfile, TARGETS_FILE))
+                cmd = "cat '{0}'".format(os.path.join(fwfile, TARGETS_FILE))
                 self._unpacked = True
             else:
                 self._tmpdir = tempfile.mkdtemp()
                 self._unpackdir = os.path.join(self._tmpdir, "unpacked")
                 os.mkdir(self._unpackdir)
-                cmd = "{0} {1} {2}".format(unpacker, fwfile, cfgpath)
+                cmd = "{0} '{1}' '{2}'".format(unpacker, fwfile, cfgpath)
             res = subprocess.check_output(cmd, shell=True, cwd=self._unpackdir)
             targets = json.loads(res.decode('utf-8'))
             with open(os.path.join(self._tmpdir, TARGETS_FILE), "w") as fp:
@@ -65,7 +65,7 @@ class CheckFirmware:
 
     def del_tmp_dir(self):
         if not self._unpacked:
-            cmd = "rm -rf {0}".format(self._tmpdir)
+            cmd = "rm -rf '{0}'".format(self._tmpdir)
             return subprocess.check_call(cmd, shell=True)
 
     def files_by_ext_stat(self, data):

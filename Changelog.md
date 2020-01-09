@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed
+- _check.py_ fix to support pathnames with spaces
+
 ## [v1.3.1] - 2020-01-07
 
 ### Fixed

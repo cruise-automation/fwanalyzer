@@ -18,8 +18,8 @@ build:
 test: lint build
 	gunzip -c test/test.img.gz >test/test.img
 	gunzip -c test/ubifs.img.gz >test/ubifs.img
-	PATH=$(PWD)/scripts:$(PWD)/test:$(PATH) go test -count=3 -cover ./...
-	PATH=$(PWD)/scripts:$(PWD)/test:$(PWD)/build:$(PATH) ./test/test.py
+	PATH="$(PWD)/scripts:$(PWD)/test:$(PATH)" go test -count=3 -cover ./...
+	PATH="$(PWD)/scripts:$(PWD)/test:$(PWD)/build:$(PATH)" ./test/test.py
 
 
 .PHONY: modules

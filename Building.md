@@ -11,8 +11,7 @@ The full list of dependencies is tracked in the [Dockerfile](Dockerfile).
 ## Clone Repository
 
 ```sh
-cd go/src/github.com/cruise-automation/
-git clone git@github.com:cruise-automation/fwanalyzer.git
+go get github.com/cruise-automation/fwanalyzer
 ```
 
 ## Building

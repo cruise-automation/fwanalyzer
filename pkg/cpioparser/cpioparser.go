@@ -46,11 +46,12 @@ type CpioParser struct {
 func New(imagepath string) *CpioParser {
 	parser := &CpioParser{
 		//lrwxrwxrwx   1 0        0              19 Apr 24  2019 lib/libnss_dns.so.2 -> libnss_dns-2.18.so
+		//-rwxrwxrwx   1 0        0              19 Apr 24 13:37 lib/lib.c
 		fileInfoReg: regexp.MustCompile(
-			`^([\w-]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+([\w\s\d:]+)\s+(.*)$`),
+			`^([\w-]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\w+\s\d+\s+[\d:]+)\s+(.*)$`),
 		// crw-r--r--   1 0        0          4,  64 Apr 24  2019 dev/ttyS0
 		devInfoReg: regexp.MustCompile(
-			`^([\w-]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+),\s+(\d+)\s+([\w\s\d:]+)\s+(.*)$`),
+			`^([\w-]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+),\s+(\d+)\s+(\w+\s\d+\s+[\d:]+)\s+(.*)$`),
 		fileLinkReg: regexp.MustCompile(`(\S+)\s->\s(\S+)`),
 		imagepath:   imagepath,
 	}

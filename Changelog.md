@@ -5,6 +5,7 @@
 ### Fixed
 - _check.py_ fix to support pathnames with spaces
 - _cpiofs_ fix date parsing
+- _cpiofs_ added work around for missing directory entries
 
 ## [v1.3.1] - 2020-01-07
 

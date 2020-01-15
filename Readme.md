@@ -100,9 +100,11 @@ The `FsType` (filesystem type) field selects the backend that is used to access 
 - `squashfs`: to read SquashFS filesystem images (supported FsTypeOptions are: N/A)
 - `ubifs`: to read UBIFS filesystem images (supported FsTypeOptions are: N/A)
 - `vfatfs`: to read VFat filesystem images (supported FsTypeOptions are: N/A)
-- `cpiofs`: to read cpio archives (supported FsTypeOptions are: N/A)
+- `cpiofs`: to read cpio archives (supported FsTypeOptions are: `fixdirs`)
 
 The FsTypeOptions allow tuning of the FsType driver.
+- `selinux`: will enable selinux support when reading ext filesystem images
+- `fixdirs`: will attempt to work around a cpio issue where a file exists in a directory while there is no entry for the directory itself
 
 The `DigestImage` option will generate a SHA-256 digest of the filesystem image that was analyzed, the digest will be included in the output.
 

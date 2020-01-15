@@ -41,9 +41,10 @@ type CpioParser struct {
 	fileLinkReg *regexp.Regexp
 	imagepath   string
 	files       map[string][]fsparser.FileInfo
+	fixDirs     bool
 }
 
-func New(imagepath string) *CpioParser {
+func New(imagepath string, fixDirs bool) *CpioParser {
 	parser := &CpioParser{
 		//lrwxrwxrwx   1 0        0              19 Apr 24  2019 lib/libnss_dns.so.2 -> libnss_dns-2.18.so
 		//-rwxrwxrwx   1 0        0              19 Apr 24 13:37 lib/lib.c
@@ -54,6 +55,7 @@ func New(imagepath string) *CpioParser {
 			`^([\w-]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+),\s+(\d+)\s+(\w+\s\d+\s+[\d:]+)\s+(.*)$`),
 		fileLinkReg: regexp.MustCompile(`(\S+)\s->\s(\S+)`),
 		imagepath:   imagepath,
+		fixDirs:     fixDirs,
 	}
 
 	return parser
@@ -199,7 +201,6 @@ func (p *CpioParser) loadFileList() error {
 	if p.files != nil {
 		return nil
 	}
-	p.files = make(map[string][]fsparser.FileInfo)
 
 	out, err := exec.Command("sh", "-c", cpioCmd+" -tvn --quiet < "+p.imagepath).CombinedOutput()
 	if err != nil {
@@ -208,8 +209,13 @@ func (p *CpioParser) loadFileList() error {
 			return err
 		}
 	}
+	return p.loadFileListFromString(string(out))
+}
 
-	lines := strings.Split(string(out), "\n")
+func (p *CpioParser) loadFileListFromString(rawFileList string) error {
+	p.files = make(map[string][]fsparser.FileInfo)
+
+	lines := strings.Split(rawFileList, "\n")
 	for _, line := range lines {
 		if len(line) < MIN_LINE_LENGTH {
 			continue
@@ -222,9 +228,43 @@ func (p *CpioParser) loadFileList() error {
 			dirfiles := p.files[path]
 			dirfiles = append(dirfiles, fi)
 			p.files[path] = dirfiles
+
+			if p.fixDirs {
+				p.fixDir(path, fi.Name)
+			}
 		}
 	}
 	return nil
+}
+
+/*
+ * With cpio it is possible that a file exists in a directory that does not have its own entry.
+ *  e.g. "dev/tty6" exists in the cpio but there is no entry for "dev"
+ * This function creates the missing directories in the internal structure.
+ */
+func (p *CpioParser) fixDir(dir string, name string) {
+	if dir == "/" {
+		return
+	}
+	basename := path.Base(dir)
+	dirname := path.Dir(dir)
+
+	// check that all dirname parts exist
+	if strings.Contains(dirname, "/") {
+		p.fixDir(dirname, basename)
+	}
+
+	dirExists := false
+	for _, f := range p.files[dirname] {
+		if f.Name == basename {
+			dirExists = true
+		}
+	}
+	if !dirExists {
+		dirfiles := p.files[dirname]
+		dirfiles = append(dirfiles, fsparser.FileInfo{Name: basename, Mode: 40755, Uid: 0, Gid: 0, Size: 0})
+		p.files[dirname] = dirfiles
+	}
 }
 
 // CopyFile copies the specified file to the specified destination.

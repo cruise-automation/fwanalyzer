@@ -32,7 +32,7 @@ type testData struct {
 
 func TestParseLine(t *testing.T) {
 	testImage := "../../test/test.cpio"
-	p := New(testImage)
+	p := New(testImage, true)
 
 	testdata := []testData{
 		{`-rw-r--r--   1 0        0              21 Apr 11  2008 etc/motd`, 0100644, "/etc/", "motd", true, ""},
@@ -61,9 +61,43 @@ func TestParseLine(t *testing.T) {
 	}
 }
 
+func TestFixDir(t *testing.T) {
+	testImage := "../../test/test.cpio"
+	p := New(testImage, true)
+
+	testdata := `
+crw-r--r--   1 0        0          3,   1 Jan 13 17:57 dev/ttyp1
+crw-r--r--   1 0        0          3,   1 Jan 13 17:57 dev/x/ttyp1`
+
+	err := p.loadFileListFromString(testdata)
+	if err != nil {
+		t.Error(err)
+	}
+
+	ok := false
+	for _, fn := range p.files["/"] {
+		if fn.Name == "dev" {
+			ok = true
+		}
+	}
+	if !ok {
+		t.Errorf("dir '/dev' not found")
+	}
+
+	ok = false
+	for _, fn := range p.files["/dev"] {
+		if fn.Name == "x" {
+			ok = true
+		}
+	}
+	if !ok {
+		t.Errorf("dir '/dev/x' not found")
+	}
+}
+
 func TestFull(t *testing.T) {
 	testImage := "../../test/test.cpio"
-	p := New(testImage)
+	p := New(testImage, false)
 
 	fi, err := p.GetFileInfo("/")
 	if err != nil {

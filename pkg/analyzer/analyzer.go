@@ -127,7 +127,7 @@ func NewFromConfig(imagepath string, cfgdata string) *Analyzer {
 	} else if strings.EqualFold(config.GlobalConfig.FSType, "ubifs") {
 		fsp = ubifsparser.New(imagepath)
 	} else if strings.EqualFold(config.GlobalConfig.FSType, "cpiofs") {
-		fsp = cpioparser.New(imagepath)
+		fsp = cpioparser.New(imagepath, config.GlobalConfig.FSTypeOptions == "fixdirs")
 	} else {
 		panic("Cannot find an appropriate parser: " + config.GlobalConfig.FSType)
 	}

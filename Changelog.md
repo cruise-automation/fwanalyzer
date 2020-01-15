@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [v1.3.2] - 2020-01-15
+
 ### Fixed
 - _check.py_ fix to support pathnames with spaces
 - _cpiofs_ fix date parsing

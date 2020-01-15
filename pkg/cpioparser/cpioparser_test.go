@@ -39,6 +39,7 @@ func TestParseLine(t *testing.T) {
 		{`-rw-r--r--   1 0        0              21 Apr 11 13:37 etc/mxtd`, 0100644, "/etc/", "mxtd", true, ""},
 		{`crw-r--r--   1 0        0          4,  64 Apr 24  2019 dev/ttyS0`, 020644, "/dev", "ttyS0", false, ""},
 		{`lrwxrwxrwx   1 0        0              19 Apr 24  2019 lib/libcrypto.so.1.0.0 -> libcrypto-1.0.0.so`, 0120777, "/lib", "libcrypto.so.1.0.0", false, "libcrypto-1.0.0.so"},
+		{`drwxr-xr-x   2 0        0               0 Aug  8 18:53 .`, 040755, ".", ".", false, ""},
 	}
 
 	for _, test := range testdata {

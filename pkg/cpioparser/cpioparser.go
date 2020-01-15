@@ -49,10 +49,10 @@ func New(imagepath string, fixDirs bool) *CpioParser {
 		//lrwxrwxrwx   1 0        0              19 Apr 24  2019 lib/libnss_dns.so.2 -> libnss_dns-2.18.so
 		//-rwxrwxrwx   1 0        0              19 Apr 24 13:37 lib/lib.c
 		fileInfoReg: regexp.MustCompile(
-			`^([\w-]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\w+\s\d+\s+[\d:]+)\s+(.*)$`),
+			`^([\w-]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\w+\s+\d+\s+[\d:]+)\s+(.*)$`),
 		// crw-r--r--   1 0        0          4,  64 Apr 24  2019 dev/ttyS0
 		devInfoReg: regexp.MustCompile(
-			`^([\w-]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+),\s+(\d+)\s+(\w+\s\d+\s+[\d:]+)\s+(.*)$`),
+			`^([\w-]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+),\s+(\d+)\s+(\w+\s+\d+\s+[\d:]+)\s+(.*)$`),
 		fileLinkReg: regexp.MustCompile(`(\S+)\s->\s(\S+)`),
 		imagepath:   imagepath,
 		fixDirs:     fixDirs,
@@ -262,7 +262,7 @@ func (p *CpioParser) fixDir(dir string, name string) {
 	}
 	if !dirExists {
 		dirfiles := p.files[dirname]
-		dirfiles = append(dirfiles, fsparser.FileInfo{Name: basename, Mode: 40755, Uid: 0, Gid: 0, Size: 0})
+		dirfiles = append(dirfiles, fsparser.FileInfo{Name: basename, Mode: 040755, Uid: 0, Gid: 0, Size: 0})
 		p.files[dirname] = dirfiles
 	}
 }

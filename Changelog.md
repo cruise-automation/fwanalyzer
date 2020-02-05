@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed
+
+- _check.py_ cleaned up a bit, avoiding using `shell=True` in subprocess invocations.
+
 ## [v1.3.2] - 2020-01-15
 
 ### Fixed

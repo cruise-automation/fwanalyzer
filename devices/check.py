@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2019 GM Cruise LLC
+# Copyright 2020 GM Cruise LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,11 +33,11 @@ class CheckFirmware:
         return self._tmpdir
 
     def run_fwanalyzer_fs(self, img, cfg, cfginc, out, options=""):
-        cfginclude = ""
+        cfginclude = []
         if cfginc:
-            cfginclude = " -cfgpath '{0}'".format(cfginc)
-        cmd = "{0} -in '{1}' {2} -cfg '{3}' -out '{4}' {5}".format(self._fwanalyzer, img, cfginclude, cfg, out, options)
-        return subprocess.check_call(cmd, shell=True)
+            cfginclude = ["-cfgpath", cfginc]
+        cmd = [self._fwanalyzer, "-in", img, *cfginclude, "-cfg", cfg, "-out", out, options]
+        return subprocess.check_call(cmd)
 
     def unpack(self, fwfile, unpacker, cfgpath):
         TARGETS_FILE = "targets.json"
@@ -46,17 +46,17 @@ class CheckFirmware:
                 self._tmpdir = fwfile
                 self._unpackdir = os.path.join(self._tmpdir, "unpacked")
                 print("{0}: is a directory containing an 'unpacked' path, skipping".format(fwfile))
-                cmd = "cat '{0}'".format(os.path.join(fwfile, TARGETS_FILE))
+                cmd = ["cat", os.path.join(fwfile, TARGETS_FILE)]
                 self._unpacked = True
             else:
                 self._tmpdir = tempfile.mkdtemp()
                 self._unpackdir = os.path.join(self._tmpdir, "unpacked")
                 os.mkdir(self._unpackdir)
-                cmd = "{0} '{1}' '{2}'".format(unpacker, fwfile, cfgpath)
-            res = subprocess.check_output(cmd, shell=True, cwd=self._unpackdir)
-            targets = json.loads(res.decode('utf-8'))
-            with open(os.path.join(self._tmpdir, TARGETS_FILE), "w") as fp:
-                fp.write(res.decode('utf-8'))
+                cmd = [unpacker, fwfile, cfgpath]
+            res = subprocess.check_output(cmd, cwd=self._unpackdir)
+            targets = json.loads(res.decode("utf-8"))
+            with open(os.path.join(self._tmpdir, TARGETS_FILE), "w") as f:
+                f.write(res.decode("utf-8"))
             return targets
         except Exception as e:
             print("Exception: {0}".format(e))
@@ -65,31 +65,30 @@ class CheckFirmware:
 
     def del_tmp_dir(self):
         if not self._unpacked:
-            cmd = "rm -rf '{0}'".format(self._tmpdir)
-            return subprocess.check_call(cmd, shell=True)
+            return subprocess.check_call(["rm", "-rf", self._tmpdir])
 
     def files_by_ext_stat(self, data):
         allext = {}
-        for i in data["files"]:
-            fn, ext = os.path.splitext(i["name"])
+        for file in data["files"]:
+            fn, ext = os.path.splitext(file["name"])
             if ext in allext:
                 count, ext = allext[ext]
                 allext[ext] = count + 1, ext
             else:
                 allext[ext] = (1, ext)
-        return (len(data["files"]), allext)
+        return len(data["files"]), allext
 
     def analyze_filetree(self, filetreefile):
-        with open(filetreefile) as fp:
-            data = json.load(fp)
+        with open(filetreefile) as f:
+            data = json.load(f)
         num_files, stats = self.files_by_ext_stat(data)
         out = {}
         percent = num_files / 100
         # only keep entries with count > 1% and files that have an extension
         for i in stats:
-            (count, ext) = stats[i]
+            count, ext = stats[i]
             if count > percent and ext != "":
-                out[ext] = (count, ext)
+                out[ext] = count, ext
 
         return {
             "total_files": num_files,
@@ -127,8 +126,8 @@ def hashfile(fpath):
     return m.hexdigest()
 
 
-# make report from image reports
 def make_report(fwfile, data):
+    """Return a json report built from image reports."""
     report = {}
     status = True
     for key in data:
@@ -196,8 +195,8 @@ if __name__ == "__main__":
 
     report = make_report(args.fw, out)
     if args.report != None:
-        with open(args.report, "w+") as fp:
-            fp.write(report)
+        with open(args.report, "w+") as f:
+            f.write(report)
         print("report written to '{0}'".format(args.report))
     else:
         print(report)

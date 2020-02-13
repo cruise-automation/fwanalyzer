@@ -5,8 +5,10 @@ Always update Version in Makefile
 
 ## Unreleased
 
-### Changed
+### Added
+- NEW support for Capabilities
 
+### Changed
 - _check.py_ cleaned up a bit, avoiding using `shell=True` in subprocess invocations.
 
 ## [v1.3.2] - 2020-01-15

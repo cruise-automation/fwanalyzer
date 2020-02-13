@@ -22,13 +22,17 @@ release: build
 	cp build/fwanalyzer release/fwanalyzer-$(VERSION)-linux-amd64
 	git add -f release/fwanalyzer-$(VERSION)-linux-amd64
 
-.PHONY: test
-test: lint build
+.PHONY: testsetup
+testsetup:
 	gunzip -c test/test.img.gz >test/test.img
 	gunzip -c test/ubifs.img.gz >test/ubifs.img
+	sudo setcap cap_net_admin+p test/test.cap.file
+	getcap test/test.cap.file
+
+.PHONY: test
+test: lint build
 	PATH="$(PWD)/scripts:$(PWD)/test:$(PATH)" go test -count=3 -cover ./...
 	PATH="$(PWD)/scripts:$(PWD)/test:$(PWD)/build:$(PATH)" ./test/test.py
-
 
 .PHONY: modules
 modules:

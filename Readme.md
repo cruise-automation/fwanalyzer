@@ -95,7 +95,7 @@ The global config is used to define some general parameters.
 
 The `FsType` (filesystem type) field selects the backend that is used to access the files in the image. The supported options for FsType are:
 
-- `dirfs`: to read files from a directory on the host running fwanalyzer (supported FsTypeOptions are: N/A)
+- `dirfs`: to read files from a directory on the host running fwanalyzer, supports Capabilities (supported FsTypeOptions are: N/A)
 - `extfs`: to read ext2/3/4 filesystem images (supported FsTypeOptions are: `selinux`)
 - `squashfs`: to read SquashFS filesystem images (supported FsTypeOptions are: N/A)
 - `ubifs`: to read UBIFS filesystem images (supported FsTypeOptions are: N/A)
@@ -145,6 +145,7 @@ The `GlobalFileChecks` are more general checks that are applied to the entire fi
 - `Gids` : int array, (optional) specifies every allowed GID in the system, every file needs to be owned by a Gid specified in this list
 - `BadFiles` : string array, (optional) specifies a list of unwanted files, allows wildcards such as `?`, `*`, and `**` (no file in this list should exist)
 - `BadFilesInformationalOnly` : bool, (optional) the result of the BadFile check will be Informational only (default: false)
+- `FlagCapabilityInformationalOnly` : bool, (optional) flag files for having a Capability set as Informational (default: false)
 
 Example:
 ```toml
@@ -178,6 +179,7 @@ Any variation of the configuration will be reported as an offender.
 - `Mode` : string, (optional) specifies the UN*X file mode/permissions in octal, not specifying a mode will skip the check
 - `SELinuxLabel` : string, (optional) the SELinux label of the file (will skip the check if not set)
 - `LinkTarget` : string, (optional) the target of a symlink, not specifying a link target will skip the check. This is currently supported for `dirfs`, `squashfs`, and `ubifs` filesystems.
+- `Capability` : string array, (optional) list of capabilities (e.g. cap_net_admin+p).
 
 - `Desc` : string, (optional) is a descriptive string that will be attached to the report if there is a failed check
 - `InformationalOnly` : bool, (optional) the result of the check will be Informational only (default: false)

@@ -17,7 +17,9 @@ limitations under the License.
 package dirparser
 
 import (
+	"fmt"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -93,5 +95,16 @@ func TestGetFileInfo(t *testing.T) {
 	}
 	if fi.LinkTarget != "testdir" {
 		t.Errorf("GetFileInfo failed, incorrect link target: %s", fi.LinkTarget)
+	}
+}
+
+func TestCapability(t *testing.T) {
+	fi, err := d.GetFileInfo("/test.cap.file")
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(fi.Capabilities)
+	if len(fi.Capabilities) == 0 || !strings.EqualFold(fi.Capabilities[0], "cap_net_admin+p") {
+		t.Error("capability test failed: likely need to run 'sudo setcap cap_net_admin+p test/test.cap.file'")
 	}
 }

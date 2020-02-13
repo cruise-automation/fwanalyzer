@@ -28,6 +28,7 @@ import (
 	"github.com/BurntSushi/toml"
 
 	"github.com/cruise-automation/fwanalyzer/pkg/analyzer"
+	"github.com/cruise-automation/fwanalyzer/pkg/capability"
 	"github.com/cruise-automation/fwanalyzer/pkg/fsparser"
 	"github.com/cruise-automation/fwanalyzer/pkg/util"
 )
@@ -55,7 +56,7 @@ type fileTreeType struct {
 
 type fileInfoSaveType struct {
 	fsparser.FileInfo
-	Digest string `json:"digest"`
+	Digest string `json:"digest,omitempty"`
 }
 type imageInfoSaveType struct {
 	ImageName   string             `json:"image_name"`
@@ -179,6 +180,7 @@ func (state *fileTreeType) CheckFile(fi *fsparser.FileInfo, filepath string) err
 			Gid:          fi.Gid,
 			Mode:         fi.Mode,
 			SELinuxLabel: fi.SELinuxLabel,
+			Capabilities: fi.Capabilities,
 		},
 		digest,
 	}
@@ -213,6 +215,7 @@ func (state *fileTreeType) Finalize() string {
 				oFi.Uid != cFi.Uid ||
 				oFi.Gid != cFi.Gid ||
 				oFi.SELinuxLabel != cFi.SELinuxLabel ||
+				!capability.CapsEqual(oFi.Capabilities, cFi.Capabilities) ||
 				((oFi.Size != cFi.Size) && state.config.CheckFileSize) ||
 				((oFi.Digest != cFi.Digest) && state.config.CheckFileDigest) {
 				changed = append(changed, filepath)

@@ -28,14 +28,15 @@ import (
 )
 
 type filePermsConfigType struct {
-	Suid                      bool
-	SuidWhiteList             map[string]bool
-	WorldWrite                bool
-	SELinuxLabel              bool
-	Uids                      map[int]bool
-	Gids                      map[int]bool
-	BadFiles                  map[string]bool
-	BadFilesInformationalOnly bool
+	Suid                            bool
+	SuidWhiteList                   map[string]bool
+	WorldWrite                      bool
+	SELinuxLabel                    bool
+	Uids                            map[int]bool
+	Gids                            map[int]bool
+	BadFiles                        map[string]bool
+	BadFilesInformationalOnly       bool
+	FlagCapabilityInformationalOnly bool
 }
 
 type filePermsType struct {
@@ -45,13 +46,15 @@ type filePermsType struct {
 
 func New(config string, a analyzer.AnalyzerType) *filePermsType {
 	type filePermsConfig struct {
-		Suid          bool
-		SuidWhiteList []string
-		WorldWrite    bool
-		SELinuxLabel  bool
-		Uids          []int
-		Gids          []int
-		BadFiles      []string
+		Suid                            bool
+		SuidWhiteList                   []string
+		WorldWrite                      bool
+		SELinuxLabel                    bool
+		Uids                            []int
+		Gids                            []int
+		BadFiles                        []string
+		BadFilesInformationalOnly       bool
+		FlagCapabilityInformationalOnly bool
 	}
 	type fpc struct {
 		GlobalFileChecks filePermsConfig
@@ -63,9 +66,11 @@ func New(config string, a analyzer.AnalyzerType) *filePermsType {
 	}
 
 	configuration := filePermsConfigType{
-		Suid:         conf.GlobalFileChecks.Suid,
-		WorldWrite:   conf.GlobalFileChecks.WorldWrite,
-		SELinuxLabel: conf.GlobalFileChecks.SELinuxLabel,
+		Suid:                            conf.GlobalFileChecks.Suid,
+		WorldWrite:                      conf.GlobalFileChecks.WorldWrite,
+		SELinuxLabel:                    conf.GlobalFileChecks.SELinuxLabel,
+		BadFilesInformationalOnly:       conf.GlobalFileChecks.BadFilesInformationalOnly,
+		FlagCapabilityInformationalOnly: conf.GlobalFileChecks.FlagCapabilityInformationalOnly,
 	}
 	configuration.SuidWhiteList = make(map[string]bool)
 	for _, wlfn := range conf.GlobalFileChecks.SuidWhiteList {
@@ -127,6 +132,12 @@ func (state *filePermsType) CheckFile(fi *fsparser.FileInfo, fpath string) error
 	if len(state.config.Gids) > 0 {
 		if _, ok := state.config.Gids[fi.Gid]; !ok {
 			state.a.AddOffender(path.Join(fpath, fi.Name), fmt.Sprintf("File Gid not allowed, Gid = %d", fi.Gid))
+		}
+	}
+
+	if state.config.FlagCapabilityInformationalOnly {
+		if len(fi.Capabilities) > 0 {
+			state.a.AddInformational(path.Join(fpath, fi.Name), fmt.Sprintf("Capabilities found: %s", fi.Capabilities))
 		}
 	}
 

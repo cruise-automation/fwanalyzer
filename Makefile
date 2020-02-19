@@ -4,6 +4,8 @@ ifeq ($(GOOS),)
 GOOS := "linux"
 endif
 
+VERSION=1.3.2
+
 PWD := $(shell pwd)
 
 all: build
@@ -13,6 +15,12 @@ build:
 	go mod verify
 	mkdir -p build
 	GOOS=$(GOOS) go build -a -ldflags '-w -s' -o build/fwanalyzer ./cmd/fwanalyzer
+
+.PHONY: release
+release: build
+	mkdir -p release
+	cp build/fwanalyzer release/fwanalyzer-$(VERSION)-linux-amd64
+	git add -f release/fwanalyzer-$(VERSION)-linux-amd64
 
 .PHONY: test
 test: lint build

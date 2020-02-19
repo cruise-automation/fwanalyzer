@@ -1,4 +1,7 @@
 # Change Log
+<!---
+Always update Version in Makefile
+-->
 
 ## Unreleased
 

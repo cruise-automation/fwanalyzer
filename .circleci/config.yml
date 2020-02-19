@@ -9,6 +9,9 @@ jobs:
       - run: docker-compose build fwanalyzer
       - run: docker-compose run --rm fwanalyzer make deps 
       - run: docker-compose run --rm fwanalyzer make
+      - store_artifacts:
+          path: build/fwanalyzer
+          destination: fwanalyzer
 
   test:
     machine:

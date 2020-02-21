@@ -24,6 +24,7 @@ import (
 	"path/filepath"
 	"syscall"
 
+	"github.com/cruise-automation/fwanalyzer/pkg/capability"
 	"github.com/cruise-automation/fwanalyzer/pkg/fsparser"
 )
 
@@ -78,6 +79,17 @@ func (dir *DirParser) GetFileInfo(dirpath string) (fsparser.FileInfo, error) {
 	fi.Gid = int(fileStat.Gid)
 	fi.SELinuxLabel = fsparser.SELinuxNoLabel
 	fi.Size = fileStat.Size
+
+	capsBytes := make([]byte, capability.CapByteSizeMax)
+	capsSize, _ := syscall.Getxattr(fpath, "security.capability", capsBytes)
+	// ignore err since we only care about the returned size
+	if capsSize > 0 {
+		fi.Capabilities, err = capability.New(capsBytes)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
 	if fi.IsLink() {
 		fi.LinkTarget, err = os.Readlink(fpath)
 		if err != nil {

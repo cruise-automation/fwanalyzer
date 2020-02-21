@@ -24,6 +24,7 @@ import (
 	"github.com/BurntSushi/toml"
 
 	"github.com/cruise-automation/fwanalyzer/pkg/analyzer"
+	"github.com/cruise-automation/fwanalyzer/pkg/capability"
 	"github.com/cruise-automation/fwanalyzer/pkg/fsparser"
 )
 
@@ -33,6 +34,7 @@ type fileexistType struct {
 	Uid               int
 	Gid               int
 	SELinuxLabel      string
+	Capabilities      []string
 	Desc              string
 	InformationalOnly bool
 }
@@ -124,6 +126,16 @@ func (state *fileExistType) Finalize() string {
 					state.a.AddInformational(fn, fmt.Sprintf("File State Check failed: selinux label found = %s should be = %s : %s", fi.SELinuxLabel, item.SELinuxLabel, item.Desc))
 				} else {
 					state.a.AddOffender(fn, fmt.Sprintf("File State Check failed: selinux label found = %s should be = %s : %s", fi.SELinuxLabel, item.SELinuxLabel, item.Desc))
+				}
+			}
+
+			if len(item.Capabilities) > 0 {
+				if !capability.CapsEqual(item.Capabilities, fi.Capabilities) {
+					if item.InformationalOnly {
+						state.a.AddInformational(fn, fmt.Sprintf("Capabilities found: %s expected: %s", fi.Capabilities, item.Capabilities))
+					} else {
+						state.a.AddOffender(fn, fmt.Sprintf("Capabilities found: %s expected: %s", fi.Capabilities, item.Capabilities))
+					}
 				}
 			}
 		}

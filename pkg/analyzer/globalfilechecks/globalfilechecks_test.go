@@ -45,7 +45,9 @@ func (a *testAnalyzer) FileGet(filepath string) (string, error) {
 func (a *testAnalyzer) AddOffender(filepath string, reason string) {
 	a.ocb(filepath)
 }
-func (a *testAnalyzer) AddInformational(filepath string, reason string) {}
+func (a *testAnalyzer) AddInformational(filepath string, reason string) {
+	a.ocb(filepath)
+}
 func (a *testAnalyzer) CheckAllFilesWithPath(cb analyzer.AllFilesCallback, cbdata analyzer.AllFilesCallbackData, filepath string) {
 }
 func (a *testAnalyzer) ImageInfo() analyzer.AnalyzerReport {
@@ -63,6 +65,7 @@ WorldWrite = true
 Uids = [0]
 Gids = [0]
 BadFiles = ["/file99", "/file1", "**.h"]
+FlagCapabilityInformationalOnly = true
 `
 
 	g := New(cfg, a)
@@ -87,6 +90,8 @@ BadFiles = ["/file99", "/file1", "**.h"]
 		// Bad files
 		{fsparser.FileInfo{Name: "file99", SELinuxLabel: "uidfile"}, "/", true},
 		{fsparser.FileInfo{Name: "test.h", SELinuxLabel: "uidfile"}, "/usr/", true},
+		// Capability
+		{fsparser.FileInfo{Name: "ping", Capabilities: []string{"cap_net_admin+p"}}, "/usr/bin", true},
 	}
 
 	var triggered bool

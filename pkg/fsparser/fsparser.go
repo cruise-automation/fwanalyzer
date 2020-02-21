@@ -31,13 +31,14 @@ type FsParser interface {
 }
 
 type FileInfo struct {
-	Size         int64  `json:"size"`
-	Mode         uint64 `json:"mode"`
-	Uid          int    `json:"uid"`
-	Gid          int    `json:"gid"`
-	SELinuxLabel string `json:"se_linux_label"`
-	Name         string `json:"name"`
-	LinkTarget   string `json:"link_target"`
+	Size         int64    `json:"size"`
+	Mode         uint64   `json:"mode"`
+	Uid          int      `json:"uid"`
+	Gid          int      `json:"gid"`
+	SELinuxLabel string   `json:"se_linux_label,omitempty"`
+	Capabilities []string `json:"capabilities,omitempty"`
+	Name         string   `json:"name"`
+	LinkTarget   string   `json:"link_target,omitempty"`
 }
 
 const (

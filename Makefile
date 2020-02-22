@@ -26,6 +26,7 @@ release: build
 testsetup:
 	gunzip -c test/test.img.gz >test/test.img
 	gunzip -c test/ubifs.img.gz >test/ubifs.img
+	gunzip -c test/cap_ext2.img.gz >test/cap_ext2.img
 	sudo setcap cap_net_admin+p test/test.cap.file
 	getcap test/test.cap.file
 

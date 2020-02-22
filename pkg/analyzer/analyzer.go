@@ -117,17 +117,21 @@ func NewFromConfig(imagepath string, cfgdata string) *Analyzer {
 	var fsp fsparser.FsParser
 	// Set the parser based on the FSType in the config
 	if strings.EqualFold(config.GlobalConfig.FSType, "extfs") {
-		fsp = extparser.New(imagepath, config.GlobalConfig.FSTypeOptions == "selinux")
+		fsp = extparser.New(imagepath,
+			strings.Contains(config.GlobalConfig.FSTypeOptions, "selinux"),
+			strings.Contains(config.GlobalConfig.FSTypeOptions, "capabilities"))
 	} else if strings.EqualFold(config.GlobalConfig.FSType, "dirfs") {
 		fsp = dirparser.New(imagepath)
 	} else if strings.EqualFold(config.GlobalConfig.FSType, "vfatfs") {
 		fsp = vfatparser.New(imagepath)
 	} else if strings.EqualFold(config.GlobalConfig.FSType, "squashfs") {
-		fsp = squashfsparser.New(imagepath)
+		fsp = squashfsparser.New(imagepath,
+			strings.Contains(config.GlobalConfig.FSTypeOptions, "securityinfo"))
 	} else if strings.EqualFold(config.GlobalConfig.FSType, "ubifs") {
 		fsp = ubifsparser.New(imagepath)
 	} else if strings.EqualFold(config.GlobalConfig.FSType, "cpiofs") {
-		fsp = cpioparser.New(imagepath, config.GlobalConfig.FSTypeOptions == "fixdirs")
+		fsp = cpioparser.New(imagepath,
+			strings.Contains(config.GlobalConfig.FSTypeOptions, "fixdirs"))
 	} else {
 		panic("Cannot find an appropriate parser: " + config.GlobalConfig.FSType)
 	}

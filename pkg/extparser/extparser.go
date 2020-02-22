@@ -25,13 +25,16 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cruise-automation/fwanalyzer/pkg/capability"
 	"github.com/cruise-automation/fwanalyzer/pkg/fsparser"
 )
 
 type Ext2Parser struct {
-	fileinfoReg *regexp.Regexp
-	selinux     bool
-	imagepath   string
+	fileinfoReg  *regexp.Regexp
+	regexString  string
+	selinux      bool
+	capabilities bool
+	imagepath    string
 }
 
 const (
@@ -39,17 +42,22 @@ const (
 	e2ToolsLs = "e2ls"
 )
 
-func New(imagepath string, selinux bool) *Ext2Parser {
+func New(imagepath string, selinux, capabilities bool) *Ext2Parser {
 	parser := &Ext2Parser{
 		// 365  120777     0     0        7 12-Jul-2018 10:15 true
-		fileinfoReg: regexp.MustCompile(
-			`^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+-\w+-\d+)\s+(\d+:\d+)\s+(\S+)`),
-		imagepath: imagepath,
-		selinux:   false,
+		regexString:  `^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+-\w+-\d+)\s+(\d+:\d+)\s+(\S+)`,
+		imagepath:    imagepath,
+		selinux:      false,
+		capabilities: false,
 	}
+
 	if selinux && seLinuxSupported() {
 		parser.enableSeLinux()
 	}
+	if capabilities && capabilitiesSupported() {
+		parser.enableCapabilities()
+	}
+	parser.fileinfoReg = regexp.MustCompile(parser.regexString)
 	return parser
 }
 
@@ -60,9 +68,21 @@ func (e *Ext2Parser) ImageName() string {
 func (e *Ext2Parser) enableSeLinux() {
 	// with selinux support (-Z)
 	// 2600  100750     0  2000     1041   1-Jan-2009 03:00 init.environ.rc   u:object_r:rootfs:s0
-	e.fileinfoReg = regexp.MustCompile(
-		`^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+-\w+-\d+)\s+(\d+:\d+)\s+(\S+)\s+(\S+)`)
+	// `^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+-\w+-\d+)\s+(\d+:\d+)\s+(\S+)\s+(\S+)`)
+
+	// append selinux part
+	e.regexString = e.regexString + `\s+(\S+)`
 	e.selinux = true
+}
+
+func (e *Ext2Parser) enableCapabilities() {
+	// with capabilites support (-C)
+	// 2600  100750     0  2000     1041   1-Jan-2009 03:00 init.environ.rc 0x2000001,0x0,0x0,0x0,0x0
+	// `^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+-\w+-\d+)\s+(\d+:\d+)\s+(\S+)\s+(\S+)`)
+
+	// append capability part
+	e.regexString = e.regexString + `\s+(\S+)`
+	e.capabilities = true
 }
 
 func (e *Ext2Parser) parseFileLine(line string) fsparser.FileInfo {
@@ -81,6 +101,15 @@ func (e *Ext2Parser) parseFileLine(line string) fsparser.FileInfo {
 		fi.SELinuxLabel = fsparser.SELinuxNoLabel
 	}
 
+	if e.capabilities {
+		idx := 9
+		if e.selinux {
+			idx = 10
+		}
+		if res[0][idx] != "-" {
+			fi.Capabilities, _ = capability.New(res[0][idx])
+		}
+	}
 	return fi
 }
 
@@ -90,6 +119,9 @@ func (e *Ext2Parser) getDirList(dirpath string, ignoreDot bool) ([]fsparser.File
 	params := "-la"
 	if e.selinux {
 		params += "Z"
+	}
+	if e.capabilities {
+		params += "C"
 	}
 	out, err := exec.Command(e2ToolsLs, params, arg).CombinedOutput()
 	if err != nil {
@@ -160,5 +192,15 @@ func seLinuxSupported() bool {
 		return true
 	}
 	fmt.Fprintln(os.Stderr, "extparser: selinux not supported by your version of e2ls")
+	return false
+}
+
+func capabilitiesSupported() bool {
+	out, _ := exec.Command(e2ToolsLs).CombinedOutput()
+	// look for C (capability support) in "Usage: e2ls [-acDfilrtZC][-d dir] file"
+	if strings.Contains(string(out), "C") {
+		return true
+	}
+	fmt.Fprintln(os.Stderr, "extparser: capabilities not supported by your version of e2ls")
 	return false
 }

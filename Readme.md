@@ -10,7 +10,8 @@ FwAnalyzer relies on [e2tools](https://github.com/crmulliner/e2tools/) for ext f
 [squashfs-tools](https://github.com/plougher/squashfs-tools) for SquashFS filesystems, and
 [ubi_reader](https://github.com/crmulliner/ubi_reader) for UBIFS filesystems.
 [cpio](https://www.gnu.org/software/cpio/) for cpio archives.
-SELinux/xattr support for ext2/3/4 images requires a patched version of [e2tools](https://github.com/crmulliner/e2tools/).
+SELinux/Capability support for ext2/3/4 images requires a patched version of [e2tools](https://github.com/crmulliner/e2tools/).
+SELinux/Capability support for SquashFS images requires a patched version of [squashfs-tools](https://github.com/crmulliner/squashfs-tools/).
 
 ![fwanalyzer](images/fwanalyzer.png)
 
@@ -96,13 +97,15 @@ The global config is used to define some general parameters.
 The `FsType` (filesystem type) field selects the backend that is used to access the files in the image. The supported options for FsType are:
 
 - `dirfs`: to read files from a directory on the host running fwanalyzer, supports Capabilities (supported FsTypeOptions are: N/A)
-- `extfs`: to read ext2/3/4 filesystem images (supported FsTypeOptions are: `selinux`)
-- `squashfs`: to read SquashFS filesystem images (supported FsTypeOptions are: N/A)
+- `extfs`: to read ext2/3/4 filesystem images (supported FsTypeOptions are: `selinux` and `capabilities`)
+- `squashfs`: to read SquashFS filesystem images (supported FsTypeOptions are: `securityinfo`)
 - `ubifs`: to read UBIFS filesystem images (supported FsTypeOptions are: N/A)
 - `vfatfs`: to read VFat filesystem images (supported FsTypeOptions are: N/A)
 - `cpiofs`: to read cpio archives (supported FsTypeOptions are: `fixdirs`)
 
 The FsTypeOptions allow tuning of the FsType driver.
+- `securityinfo`: will enable selinux and capability support for SquashFS images
+- `capabilities`: will enable capability support when reading ext filesystem images
 - `selinux`: will enable selinux support when reading ext filesystem images
 - `fixdirs`: will attempt to work around a cpio issue where a file exists in a directory while there is no entry for the directory itself
 

@@ -7,6 +7,8 @@ Always update Version in Makefile
 
 ### Added
 - NEW support for Capabilities
+- NEW Capability support for ext2/3/4 and squashfs
+- NEW Selinux support for SquashFS
 
 ### Changed
 - _check.py_ cleaned up a bit, avoiding using `shell=True` in subprocess invocations.

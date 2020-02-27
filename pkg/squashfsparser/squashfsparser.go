@@ -27,6 +27,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cruise-automation/fwanalyzer/pkg/capability"
 	"github.com/cruise-automation/fwanalyzer/pkg/fsparser"
 )
 
@@ -35,15 +36,12 @@ const (
 	cpCmd         = "cp"
 )
 
-var (
-	// drwxr-xr-x administrator/administrator 66 2019-04-08 18:49 squashfs-root
-	fileLineRegex = regexp.MustCompile(`^([A-Za-z-]+)\s+([\-\.\w]+|\d+)/([\-\.\w]+|\d+)\s+(\d+)\s+(\d+-\d+-\d+)\s+(\d+:\d+)\s+(.*)$`)
-)
-
 // SquashFSParser parses SquashFS filesystem images.
 type SquashFSParser struct {
-	imagepath string
-	files     map[string][]fsparser.FileInfo
+	fileLineRegex *regexp.Regexp
+	imagepath     string
+	files         map[string][]fsparser.FileInfo
+	securityInfo  bool
 }
 
 func uidForUsername(username string) (int, error) {
@@ -131,11 +129,25 @@ func getExtractFile(dirpath string) (string, error) {
 	return extractFile.Name(), nil
 }
 
+func (s *SquashFSParser) enableSecurityInfo() {
+	// drwxr-xr-x administrator/administrator 66 2019-04-08 18:49 squashfs-root	- -
+	s.fileLineRegex = regexp.MustCompile(`^([A-Za-z-]+)\s+([\-\.\w]+|\d+)/([\-\.\w]+|\d+)\s+(\d+)\s+(\d+-\d+-\d+)\s+(\d+:\d+)\s+([\S ]+)\t(\S+)\s+(\S)`)
+	s.securityInfo = true
+}
+
 // New returns a new SquashFSParser instance for the given image file.
-func New(imagepath string) *SquashFSParser {
+func New(imagepath string, securityInfo bool) *SquashFSParser {
 	parser := &SquashFSParser{
-		imagepath: imagepath,
+		// drwxr-xr-x administrator/administrator 66 2019-04-08 18:49 squashfs-root
+		fileLineRegex: regexp.MustCompile(`^([A-Za-z-]+)\s+([\-\.\w]+|\d+)/([\-\.\w]+|\d+)\s+(\d+)\s+(\d+-\d+-\d+)\s+(\d+:\d+)\s+(.*)$`),
+		imagepath:     imagepath,
+		securityInfo:  false,
 	}
+
+	if securityInfo && securityInfoSupported() {
+		parser.enableSecurityInfo()
+	}
+
 	return parser
 }
 
@@ -147,12 +159,12 @@ func normalizePath(filepath string) (dir string, name string) {
 	return
 }
 
-func parseFileLine(line string) (string, fsparser.FileInfo, error) {
+func (s *SquashFSParser) parseFileLine(line string) (string, fsparser.FileInfo, error) {
 	// TODO(jlarimer): add support for reading xattrs. unsquashfs can read
 	// and write xattrs, but it doesn't display them when just listing files.
 	var fi fsparser.FileInfo
 	dirpath := ""
-	res := fileLineRegex.FindStringSubmatch(line)
+	res := s.fileLineRegex.FindStringSubmatch(line)
 	if res == nil {
 		return dirpath, fi, fmt.Errorf("Can't match line %s\n", line)
 	}
@@ -183,6 +195,14 @@ func parseFileLine(line string) (string, fsparser.FileInfo, error) {
 	} else {
 		dirpath, fi.Name = normalizePath(res[7])
 	}
+
+	if s.securityInfo {
+		if res[8] != "-" {
+			fi.Capabilities, _ = capability.New(res[8])
+		}
+		fi.SELinuxLabel = res[9]
+	}
+
 	return dirpath, fi, nil
 }
 
@@ -192,14 +212,19 @@ func (s *SquashFSParser) loadFileList() error {
 	}
 	s.files = make(map[string][]fsparser.FileInfo)
 
-	out, err := exec.Command(unsquashfsCmd, "-d", "", "-ll", s.imagepath).CombinedOutput()
+	args := []string{"-d", "", "-lln", s.imagepath}
+	if s.securityInfo {
+		args = append([]string{"-llS"}, args...)
+	}
+
+	out, err := exec.Command(unsquashfsCmd, args...).CombinedOutput()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "getDirList: %s", err)
 		return err
 	}
 	lines := strings.Split(string(out), "\n")
 	for _, line := range lines {
-		path, fi, err := parseFileLine(line)
+		path, fi, err := s.parseFileLine(line)
 		if err == nil {
 			dirfiles := s.files[path]
 			dirfiles = append(dirfiles, fi)
@@ -287,4 +312,14 @@ func (f *SquashFSParser) Supported() bool {
 	}
 	_, err = exec.LookPath(cpCmd)
 	return err == nil
+}
+
+func securityInfoSupported() bool {
+	out, _ := exec.Command(unsquashfsCmd).CombinedOutput()
+	// look for -ll[S] (securityInfo support) in output
+	if strings.Contains(string(out), "-ll[S]") {
+		return true
+	}
+	fmt.Fprintln(os.Stderr, "squashfsparser: security info (selinux + capabilities) not supported by your version of unsquashfs")
+	return false
 }

@@ -19,6 +19,7 @@ package squashfsparser
 import (
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -157,8 +158,10 @@ func TestParseFileLine(t *testing.T) {
 		},
 	}
 
+	s := New("", false)
+
 	for _, test := range tests {
-		dirpath, fi, err := parseFileLine(test.line)
+		dirpath, fi, err := s.parseFileLine(test.line)
 		if err != nil && !test.err {
 			t.Errorf("parseFileLine(\"%s\") returned error but shouldn't have: %s", test.line, err)
 			continue
@@ -174,7 +177,7 @@ func TestParseFileLine(t *testing.T) {
 
 func TestImageName(t *testing.T) {
 	testImage := "../../test/squashfs.img"
-	f := New(testImage)
+	f := New(testImage, false)
 
 	imageName := f.ImageName()
 	if imageName != testImage {
@@ -184,7 +187,7 @@ func TestImageName(t *testing.T) {
 
 func TestDirInfoRoot(t *testing.T) {
 	testImage := "../../test/squashfs.img"
-	f := New(testImage)
+	f := New(testImage, false)
 
 	/*
 		$ unsquashfs -d "" -ll test/squashfs.img
@@ -295,7 +298,7 @@ func TestDirInfoRoot(t *testing.T) {
 
 func TestGetFileInfo(t *testing.T) {
 	testImage := "../../test/squashfs.img"
-	f := New(testImage)
+	f := New(testImage, false)
 
 	fi, err := f.GetFileInfo("/")
 	if err != nil {
@@ -335,7 +338,7 @@ func TestGetFileInfo(t *testing.T) {
 
 func TestCopyFile(t *testing.T) {
 	testImage := "../../test/squashfs.img"
-	f := New(testImage)
+	f := New(testImage, false)
 
 	if !f.CopyFile("/dir2/subdir2/file4", ".") {
 		t.Errorf("CopyFile() returned false")
@@ -353,4 +356,23 @@ func TestCopyFile(t *testing.T) {
 	if string(data) != expected {
 		t.Errorf("file4 expected \"%s\" but got \"%s\"", expected, data)
 	}
+}
+
+func TestSecurityInfo(t *testing.T) {
+	testImage := "../../test/squashfs_cap.img"
+	f := New(testImage, true)
+
+	fi, err := f.GetFileInfo("/ifconfig")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if fi.SELinuxLabel != "-" {
+		t.Error("no selinux label should be present")
+	}
+
+	if !strings.EqualFold(fi.Capabilities[0], "cap_net_admin+p") {
+		t.Errorf("bad capabilities: %s", fi.Capabilities)
+	}
+
 }

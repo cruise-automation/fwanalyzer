@@ -18,6 +18,7 @@ package extparser
 
 import (
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -26,7 +27,7 @@ var e *Ext2Parser
 func TestMain(t *testing.T) {
 	testImage := "../../test/test.img"
 
-	e = New(testImage, false)
+	e = New(testImage, false, false)
 
 	if e.ImageName() != testImage {
 		t.Errorf("ImageName returned bad name")
@@ -113,5 +114,23 @@ func TestGetFileInfo(t *testing.T) {
 		if fi.Name != test.filename {
 			t.Errorf("filename does not match: %s", fi.Name)
 		}
+	}
+}
+
+func TestCap(t *testing.T) {
+	testImage := "../../test/cap_ext2.img"
+
+	e = New(testImage, false, true)
+
+	if e.ImageName() != testImage {
+		t.Errorf("ImageName returned bad name")
+	}
+
+	fi, err := e.GetFileInfo("/test")
+	if err != nil {
+		t.Error(err)
+	}
+	if !strings.EqualFold(fi.Capabilities[0], "cap_net_admin+p") {
+		t.Errorf("Capabilities %s don't match", fi.Capabilities)
 	}
 }

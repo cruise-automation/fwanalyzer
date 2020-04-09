@@ -85,7 +85,7 @@ func (state *fileExistType) Finalize() string {
 	for fn, item := range state.files.FileStatCheck {
 		fi, err := state.a.GetFileInfo(fn)
 		if err != nil {
-			state.a.AddOffender(fn, fmt.Sprintf("file does not exist"))
+			state.a.AddOffender(fn, "file does not exist")
 		} else {
 			checkMode := false
 			var mode uint64

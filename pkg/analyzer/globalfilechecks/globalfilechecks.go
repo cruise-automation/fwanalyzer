@@ -108,18 +108,18 @@ func (state *filePermsType) CheckFile(fi *fsparser.FileInfo, fpath string) error
 	if state.config.Suid {
 		if fi.IsSUid() || fi.IsSGid() {
 			if _, ok := state.config.SuidWhiteList[path.Join(fpath, fi.Name)]; !ok {
-				state.a.AddOffender(path.Join(fpath, fi.Name), fmt.Sprintf("File is SUID, not allowed"))
+				state.a.AddOffender(path.Join(fpath, fi.Name), "File is SUID, not allowed")
 			}
 		}
 	}
 	if state.config.WorldWrite {
 		if fi.IsWorldWrite() && !fi.IsLink() && !fi.IsDir() {
-			state.a.AddOffender(path.Join(fpath, fi.Name), fmt.Sprintf("File is WorldWriteable, not allowed"))
+			state.a.AddOffender(path.Join(fpath, fi.Name), "File is WorldWriteable, not allowed")
 		}
 	}
 	if state.config.SELinuxLabel {
 		if fi.SELinuxLabel == fsparser.SELinuxNoLabel {
-			state.a.AddOffender(path.Join(fpath, fi.Name), fmt.Sprintf("File does not have SELinux label"))
+			state.a.AddOffender(path.Join(fpath, fi.Name), "File does not have SELinux label")
 		}
 	}
 

@@ -212,8 +212,10 @@ func (s *SquashFSParser) loadFileList() error {
 	}
 	s.files = make(map[string][]fsparser.FileInfo)
 
-	args := []string{"-d", "", "-lln", s.imagepath}
+	// we want to use -lln (numeric output) but that is only available in 4.4 and later
+	args := []string{"-d", "", "-lls", s.imagepath}
 	if s.securityInfo {
+		// -llS is only available in our patched version
 		args = append([]string{"-llS"}, args...)
 	}
 

@@ -181,6 +181,7 @@ func (state *fileTreeType) CheckFile(fi *fsparser.FileInfo, filepath string) err
 			Mode:         fi.Mode,
 			SELinuxLabel: fi.SELinuxLabel,
 			Capabilities: fi.Capabilities,
+			LinkTarget:   fi.LinkTarget,
 		},
 		digest,
 	}
@@ -214,6 +215,7 @@ func (state *fileTreeType) Finalize() string {
 			if oFi.Mode != cFi.Mode ||
 				oFi.Uid != cFi.Uid ||
 				oFi.Gid != cFi.Gid ||
+				oFi.LinkTarget != cFi.LinkTarget ||
 				oFi.SELinuxLabel != cFi.SELinuxLabel ||
 				!capability.CapsEqual(oFi.Capabilities, cFi.Capabilities) ||
 				((oFi.Size != cFi.Size) && state.config.CheckFileSize) ||

@@ -5,13 +5,21 @@ Always update Version in Makefile
 
 ## Unreleased
 
+## [v1.4.0] - 2020-04-30
+
 ### Added
-- NEW support for Capabilities
+- NEW support for Linux Capabilities
 - NEW Capability support for ext2/3/4 and squashfs
 - NEW Selinux support for SquashFS
 
 ### Changed
 - _check.py_ cleaned up a bit, avoiding using `shell=True` in subprocess invocations.
+- updated linter version to v1.24
+- switch back to `-lls` for unsquashfs
+- copyright: GM Cruise -> Cruise
+
+### Fixed
+- FileTreeCheck LinkTarget handling
 
 ## [v1.3.2] - 2020-01-15
 

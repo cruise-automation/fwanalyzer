@@ -4,7 +4,7 @@ ifeq ($(GOOS),)
 GOOS := "linux"
 endif
 
-VERSION=1.3.2
+VERSION=1.4.0
 
 PWD := $(shell pwd)
 

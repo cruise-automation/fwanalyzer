@@ -5,6 +5,9 @@ Always update Version in Makefile
 
 ## Unreleased
 
+### Fixed
+- removed `release/` folder
+
 ## [v1.4.0] - 2020-04-30
 
 ### Added

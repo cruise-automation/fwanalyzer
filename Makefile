@@ -20,7 +20,6 @@ build:
 release: build
 	mkdir -p release
 	cp build/fwanalyzer release/fwanalyzer-$(VERSION)-linux-amd64
-	git add -f release/fwanalyzer-$(VERSION)-linux-amd64
 
 .PHONY: testsetup
 testsetup:

@@ -7,6 +7,8 @@ Always update Version in Makefile
 
 ### Fixed
 - removed `release/` folder
+- FileStatCheck for links
+- general handling for links
 
 ## [v1.4.0] - 2020-04-30
 

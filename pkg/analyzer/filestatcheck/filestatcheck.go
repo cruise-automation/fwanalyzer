@@ -34,6 +34,7 @@ type fileexistType struct {
 	Uid               int
 	Gid               int
 	SELinuxLabel      string
+	LinkTarget        string
 	Capabilities      []string
 	Desc              string
 	InformationalOnly bool
@@ -93,11 +94,31 @@ func (state *fileExistType) Finalize() string {
 				checkMode = true
 				mode, _ = strconv.ParseUint(item.Mode, 8, 0)
 			}
+			if item.LinkTarget != "" {
+				if !fi.IsLink() {
+					state.a.AddOffender(fn, fmt.Sprintf("File State Check failed LinkTarget set but file is not a link : %s", item.Desc))
+				} else if item.LinkTarget != fi.LinkTarget {
+					if item.InformationalOnly {
+						state.a.AddInformational(fn, fmt.Sprintf("File State Check failed LinkTarget does not match '%s' found '%s' : %s", item.LinkTarget, fi.LinkTarget, item.Desc))
+					} else {
+						state.a.AddOffender(fn, fmt.Sprintf("File State Check failed LinkTarget does not match '%s' found '%s' : %s", item.LinkTarget, fi.LinkTarget, item.Desc))
+					}
+				}
+			}
+			// not allow empty with check if file size is zero
 			if !item.AllowEmpty && fi.Size == 0 {
 				if item.InformationalOnly {
 					state.a.AddInformational(fn, fmt.Sprintf("File State Check failed: size: %d AllowEmpyt=false : %s", fi.Size, item.Desc))
 				} else {
 					state.a.AddOffender(fn, fmt.Sprintf("File State Check failed: size: %d AllowEmpyt=false : %s", fi.Size, item.Desc))
+				}
+			}
+			// not allow empty with check that file is not a Link
+			if !item.AllowEmpty && fi.IsLink() {
+				if item.InformationalOnly {
+					state.a.AddInformational(fn, fmt.Sprintf("File State Check failed: AllowEmpyt=false but file is Link (check link target instead) : %s", item.Desc))
+				} else {
+					state.a.AddOffender(fn, fmt.Sprintf("File State Check failed: AllowEmpyt=false but file is Link (check link target instead) : %s", item.Desc))
 				}
 			}
 			if checkMode && fi.Mode != mode {
@@ -128,7 +149,6 @@ func (state *fileExistType) Finalize() string {
 					state.a.AddOffender(fn, fmt.Sprintf("File State Check failed: selinux label found = %s should be = %s : %s", fi.SELinuxLabel, item.SELinuxLabel, item.Desc))
 				}
 			}
-
 			if len(item.Capabilities) > 0 {
 				if !capability.CapsEqual(item.Capabilities, fi.Capabilities) {
 					if item.InformationalOnly {

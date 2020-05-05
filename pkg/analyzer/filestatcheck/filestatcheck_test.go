@@ -116,3 +116,112 @@ Desc = "this need to be this way"`
 		}
 	}
 }
+func TestLink(t *testing.T) {
+
+	a := &testAnalyzer{}
+	a.err = nil
+
+	cfg := `
+[FileStatCheck."/filelink"]
+AllowEmpty = true
+LinkTarget = "hello"
+Uid = 1
+Desc = "this need to be this way"
+`
+
+	g := New(cfg, a)
+
+	// ensure gid/uid are set to correct values
+	for _, item := range g.files.FileStatCheck {
+		if item.Gid != -1 {
+			t.Errorf("Gid should default to -1, is %d", item.Gid)
+		}
+
+		if item.Uid != 1 {
+			t.Errorf("Uid should be 1, is %d", item.Uid)
+		}
+	}
+
+	g.Start()
+
+	fi := fsparser.FileInfo{}
+	if g.CheckFile(&fi, "/") != nil {
+		t.Errorf("checkfile failed")
+	}
+
+	tests := []struct {
+		fi            fsparser.FileInfo
+		err           error
+		shouldTrigger bool
+	}{
+		{fsparser.FileInfo{Name: "filelink", Uid: 1, Gid: 0, Mode: 0120000, LinkTarget: "hello", Size: 1}, nil, false},
+		{fsparser.FileInfo{Name: "filelink", Uid: 1, Gid: 0, Mode: 0120000, LinkTarget: "hello1", Size: 1}, nil, true},
+		{fsparser.FileInfo{Name: "filelink", Uid: 1, Gid: 0, Mode: 0755, Size: 1}, nil, true},
+	}
+
+	var triggered bool
+	for _, test := range tests {
+		triggered = false
+		a.fi = test.fi
+		a.err = test.err
+		a.ocb = func(fn string) { triggered = true }
+		g.Finalize()
+		if triggered != test.shouldTrigger {
+			t.Errorf("FileStatCheck failed")
+		}
+	}
+}
+
+func TestLinkEmpty(t *testing.T) {
+
+	a := &testAnalyzer{}
+	a.err = nil
+
+	cfg := `
+[FileStatCheck."/filelink"]
+AllowEmpty = false
+LinkTarget = "hello"
+Uid = 1
+Desc = "this need to be this way"
+`
+
+	g := New(cfg, a)
+
+	// ensure gid/uid are set to correct values
+	for _, item := range g.files.FileStatCheck {
+		if item.Gid != -1 {
+			t.Errorf("Gid should default to -1, is %d", item.Gid)
+		}
+
+		if item.Uid != 1 {
+			t.Errorf("Uid should be 1, is %d", item.Uid)
+		}
+	}
+
+	g.Start()
+
+	fi := fsparser.FileInfo{}
+	if g.CheckFile(&fi, "/") != nil {
+		t.Errorf("checkfile failed")
+	}
+
+	tests := []struct {
+		fi            fsparser.FileInfo
+		err           error
+		shouldTrigger bool
+	}{
+		{fsparser.FileInfo{Name: "filelink", Uid: 1, Gid: 0, Mode: 0120000, LinkTarget: "hello", Size: 1}, nil, true},
+	}
+
+	var triggered bool
+	for _, test := range tests {
+		triggered = false
+		a.fi = test.fi
+		a.err = test.err
+		a.ocb = func(fn string) { triggered = true }
+		g.Finalize()
+		if triggered != test.shouldTrigger {
+			t.Errorf("FileStatCheck failed")
+		}
+	}
+}

@@ -128,16 +128,17 @@ func makeTmpFromOld(filePath string) (string, error) {
 }
 
 func (state *fileCmpType) CheckFile(fi *fsparser.FileInfo, filepath string) error {
-	if !fi.IsFile() {
-		return nil
-	}
-
 	fn := path.Join(filepath, fi.Name)
 	if _, ok := state.files[fn]; !ok {
 		return nil
 	}
 
 	for _, item := range state.files[fn] {
+		if !fi.IsFile() || fi.IsLink() {
+			state.a.AddOffender(fn, "FileCmp: is not a file or is a link")
+			continue
+		}
+
 		tmpfn, err := state.a.FileGet(fn)
 		if err != nil {
 			state.a.AddOffender(fn, fmt.Sprintf("FileCmp: error getting file: %s", err))

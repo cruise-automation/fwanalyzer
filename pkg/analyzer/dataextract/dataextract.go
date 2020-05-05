@@ -92,6 +92,10 @@ func (state *dataExtractType) Name() string {
 }
 
 func (state *dataExtractType) CheckFile(fi *fsparser.FileInfo, filepath string) error {
+	if !fi.IsFile() {
+		return nil
+	}
+
 	fn := path.Join(filepath, fi.Name)
 	if _, ok := state.config[fn]; !ok {
 		return nil
@@ -108,27 +112,37 @@ func (state *dataExtractType) CheckFile(fi *fsparser.FileInfo, filepath string) 
 			continue
 		}
 
+		if fi.IsLink() {
+			state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: file is Link (extract data from actual file): %s : %s",
+				item.Name, item.Desc))
+			continue
+		}
+
 		if item.RegEx != "" {
 			reg, err := regexp.Compile(item.RegEx)
 			if err != nil {
-				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: regex compile error: %s : %s %s", item.RegEx, item.Name, item.Desc))
+				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: regex compile error: %s : %s %s",
+					item.RegEx, item.Name, item.Desc))
 				continue
 			}
 
 			tmpfn, err := state.a.FileGet(fn)
 			if err != nil {
-				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: file read error, file get: %s : %s : %s", err, item.Name, item.Desc))
+				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: file read error, file get: %s : %s : %s",
+					err, item.Name, item.Desc))
 				continue
 			}
 			fdata, err := ioutil.ReadFile(tmpfn)
 			if err != nil {
-				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: file read error, file read: %s : %s : %s", err, item.Name, item.Desc))
+				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: file read error, file read: %s : %s : %s",
+					err, item.Name, item.Desc))
 				continue
 			}
 			_ = state.a.RemoveFile(tmpfn)
 			res := reg.FindAllStringSubmatch(string(fdata), -1)
 			if len(res) < 1 {
-				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: regex match error, regex: %s : %s : %s", item.RegEx, item.Name, item.Desc))
+				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: regex match error, regex: %s : %s : %s",
+					item.RegEx, item.Name, item.Desc))
 			} else {
 				// only one match
 				if len(res) == 1 && len(res[0]) == 2 {
@@ -147,7 +161,8 @@ func (state *dataExtractType) CheckFile(fi *fsparser.FileInfo, filepath string) 
 					state.a.AddData(item.Name, string(jdata))
 					nameFilled[item.Name] = true
 				} else {
-					state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: regex match error : %s : %s", item.Name, item.Desc))
+					state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: regex match error : %s : %s",
+						item.Name, item.Desc))
 				}
 			}
 		}
@@ -155,7 +170,8 @@ func (state *dataExtractType) CheckFile(fi *fsparser.FileInfo, filepath string) 
 		if item.Script != "" {
 			out, err := runScriptOnFile(state.a, item.Script, item.ScriptOptions, fi, fn)
 			if err != nil {
-				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: script error: %s : %s : %s", err, item.Name, item.Desc))
+				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: script error: %s : %s : %s",
+					err, item.Name, item.Desc))
 			} else {
 				state.a.AddData(item.Name, out)
 				nameFilled[item.Name] = true
@@ -165,19 +181,22 @@ func (state *dataExtractType) CheckFile(fi *fsparser.FileInfo, filepath string) 
 		if item.Json != "" {
 			tmpfn, err := state.a.FileGet(fn)
 			if err != nil {
-				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: file read error, file get: %s : %s : %s", err, item.Name, item.Desc))
+				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: file read error, file get: %s : %s : %s",
+					err, item.Name, item.Desc))
 				continue
 			}
 			fdata, err := ioutil.ReadFile(tmpfn)
 			if err != nil {
-				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: file read error, file read: %s : %s : %s", err, item.Name, item.Desc))
+				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: file read error, file read: %s : %s : %s",
+					err, item.Name, item.Desc))
 				continue
 			}
 			_ = state.a.RemoveFile(tmpfn)
 
 			out, err := util.XtractJsonField(fdata, strings.Split(item.Json, "."))
 			if err != nil {
-				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: JSON decode error: %s : %s : %s", err, item.Name, item.Desc))
+				state.a.AddData(item.Name, fmt.Sprintf("DataExtract ERROR: JSON decode error: %s : %s : %s",
+					err, item.Name, item.Desc))
 				continue
 			}
 			state.a.AddData(item.Name, out)
@@ -194,7 +213,8 @@ func runScriptOnFile(a analyzer.AnalyzerType, script string, scriptOptions []str
 	if err != nil {
 		return "", err
 	}
-	options := []string{fname, filepath.Base(fpath), fmt.Sprintf("%d", fi.Uid), fmt.Sprintf("%d", fi.Gid), fmt.Sprintf("%o", fi.Mode), fi.SELinuxLabel}
+	options := []string{fname, filepath.Base(fpath), fmt.Sprintf("%d", fi.Uid), fmt.Sprintf("%d", fi.Gid),
+		fmt.Sprintf("%o", fi.Mode), fi.SELinuxLabel}
 	if len(scriptOptions) > 0 {
 		options = append(options, "--")
 		options = append(options, scriptOptions...)

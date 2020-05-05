@@ -171,17 +171,28 @@ Example Output:
 }
 ```
 
+### Link Handling
+
+With links we refer to soft links.
+Links can point to files on a different filesystem, therefore, we handle links in a special way.
+
+`FileStatCheck` will handle links like you would expect it.
+However if `AllowEmpty` is `false` and the file is a link the check fails.
+
+All other checks and dataextract will fail if the file is a link.
+Those checks need to be pointed to the actual file (the file the link points to).
+
 ### File Stat Check
 
 The `FileStatCheck` can be used to model the metadata for a specific file or directory.
 Any variation of the configuration will be reported as an offender.
 
-- `AllowEmpty` : bool, (optional) defines that the file can have zero size (default: false)
+- `AllowEmpty` : bool, (optional) defines that the file can have zero size will cause error if file is link (default: false)
 - `Uid` : int, (optional) specifies the UID of the file, not specifying a UID or specifying -1 will skip the check
 - `Gid` : int, (optional) specifies the GID of the file, not specifying a GID or specifying -1 will skip the check
 - `Mode` : string, (optional) specifies the UN*X file mode/permissions in octal, not specifying a mode will skip the check
 - `SELinuxLabel` : string, (optional) the SELinux label of the file (will skip the check if not set)
-- `LinkTarget` : string, (optional) the target of a symlink, not specifying a link target will skip the check. This is currently supported for `dirfs`, `squashfs`, and `ubifs` filesystems.
+- `LinkTarget` : string, (optional) the target of a symlink, not specifying a link target will skip the check. This is currently supported for `dirfs`, `squashfs`, `cpiofs`, and `ubifs` filesystems.
 - `Capability` : string array, (optional) list of capabilities (e.g. cap_net_admin+p).
 
 - `Desc` : string, (optional) is a descriptive string that will be attached to the report if there is a failed check

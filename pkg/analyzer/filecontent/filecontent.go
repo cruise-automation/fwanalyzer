@@ -129,6 +129,18 @@ func regexCompile(rx string) (*regexp.Regexp, error) {
 	return reg, err
 }
 
+func (state *fileContentType) canCheckFile(fi *fsparser.FileInfo, fn string, item contentType) bool {
+	if !fi.IsFile() {
+		state.a.AddOffender(fn, fmt.Sprintf("FileContent: '%s' file is NOT a file : %s", item.name, item.Desc))
+		return false
+	}
+	if fi.IsLink() {
+		state.a.AddOffender(fn, fmt.Sprintf("FileContent: '%s' file is a link (check actual file) : %s", item.name, item.Desc))
+		return false
+	}
+	return true
+}
+
 func (state *fileContentType) CheckFile(fi *fsparser.FileInfo, filepath string) error {
 	fn := path.Join(filepath, fi.Name)
 	if _, ok := state.files[fn]; !ok {
@@ -141,6 +153,9 @@ func (state *fileContentType) CheckFile(fi *fsparser.FileInfo, filepath string) 
 		items[n].checked = true
 		//fmt.Printf("name: %s file: %s (%s)\n", item.name, item.File, fn)
 		if item.RegEx != "" {
+			if !state.canCheckFile(fi, fn, item) {
+				continue
+			}
 			reg, err := regexCompile(item.RegEx)
 			if err != nil {
 				state.a.AddOffender(fn, fmt.Sprintf("FileContent: regex compile error: %s : %s : %s", item.RegEx, item.name, item.Desc))
@@ -181,6 +196,9 @@ func (state *fileContentType) CheckFile(fi *fsparser.FileInfo, filepath string) 
 		}
 
 		if item.Digest != "" {
+			if !state.canCheckFile(fi, fn, item) {
+				continue
+			}
 			digestRaw, err := state.a.FileGetSha256(fn)
 			if err != nil {
 				return err
@@ -203,11 +221,17 @@ func (state *fileContentType) CheckFile(fi *fsparser.FileInfo, filepath string) 
 			if fi.IsDir() {
 				state.a.CheckAllFilesWithPath(checkFileScript, &cbd, fn)
 			} else {
+				if !state.canCheckFile(fi, fn, item) {
+					continue
+				}
 				checkFileScript(fi, filepath, &cbd)
 			}
 		}
 
 		if item.Json != "" {
+			if !state.canCheckFile(fi, fn, item) {
+				continue
+			}
 			tmpfn, err := state.a.FileGet(fn)
 			if err != nil {
 				state.a.AddOffender(fn, fmt.Sprintf("FileContent: error getting file: %s", err))
@@ -275,7 +299,7 @@ func checkFileScript(fi *fsparser.FileInfo, fullpath string, cbData analyzer.All
 	cbd := cbData.(*callbackDataType)
 
 	// skip/ignore anything but normal files
-	if !fi.IsFile() {
+	if !fi.IsFile() || fi.IsLink() {
 		return
 	}
 

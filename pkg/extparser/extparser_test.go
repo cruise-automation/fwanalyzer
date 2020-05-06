@@ -91,22 +91,31 @@ func TestGetDirInfo(t *testing.T) {
 
 func TestGetFileInfo(t *testing.T) {
 	tests := []struct {
-		filePath string
-		isFile   bool
-		isDir    bool
-		filename string
+		filePath   string
+		isFile     bool
+		isDir      bool
+		isLink     bool
+		linkTarget string
+		filename   string
 	}{
-		{"/date1", true, false, "date1"},
-		{"/", false, true, "/"},
-		{"/dir1", false, true, "dir1"},
+		{"/date1", true, false, false, "", "date1"},
+		{"/", false, true, false, "", "/"},
+		{"/dir1", false, true, false, "", "dir1"},
+		{"/file_link", false, false, true, "file2", "file_link"},
 	}
 	for _, test := range tests {
 		fi, err := e.GetFileInfo(test.filePath)
 		if err != nil {
-			t.Errorf("GetFileInfo failed")
+			t.Errorf("GetFileInfo failed: %v", err)
 		}
 		if fi.IsFile() != test.isFile {
 			t.Errorf("GetFileInfo failed, isFile != %v", test.isFile)
+		}
+		if fi.IsLink() != test.isLink {
+			t.Errorf("GetFileInfo failed, isLink != %v", test.isLink)
+		}
+		if fi.LinkTarget != test.linkTarget {
+			t.Errorf("GetFileInfo failed, link target bad")
 		}
 		if fi.IsDir() != test.isDir {
 			t.Errorf("GetFileInfo failed, isDir != %v", test.isDir)
@@ -121,6 +130,10 @@ func TestCap(t *testing.T) {
 	testImage := "../../test/cap_ext2.img"
 
 	e = New(testImage, false, true)
+	if !capabilitiesSupported() {
+		t.Error("capabilities are not supported by e2ls")
+		return
+	}
 
 	if e.ImageName() != testImage {
 		t.Errorf("ImageName returned bad name")

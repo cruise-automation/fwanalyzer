@@ -30,9 +30,16 @@ testsetup:
 	getcap test/test.cap.file
 
 .PHONY: test
-test: lint build
+test:
 	PATH="$(PWD)/scripts:$(PWD)/test:$(PATH)" go test -count=3 -cover ./...
+
+.PHONY: integration-test
+integration-test: build
 	PATH="$(PWD)/scripts:$(PWD)/test:$(PWD)/build:$(PATH)" ./test/test.py
+
+.PHONY: ci-tests
+ci-tests: lint build test integration-test
+	echo "done"
 
 .PHONY: modules
 modules:

@@ -5,6 +5,8 @@ Always update Version in Makefile
 
 ## Unreleased
 
+## [v1.4.1] - 2020-05-06
+
 ### Fixed
 - removed `release/` folder
 - FileStatCheck for links

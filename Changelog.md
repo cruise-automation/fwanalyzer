@@ -5,6 +5,13 @@ Always update Version in Makefile
 
 ## Unreleased
 
+### Added
+- link support for extfs, this requires `https://github.com/crmulliner/e2tools/tree/link_support` (or later)
+
+### Changed
+- updated `test/test.img.gz` ext2 test filesystem image
+- updated `test/e2cp` binary
+
 ## [v1.4.1] - 2020-05-06
 
 ### Fixed

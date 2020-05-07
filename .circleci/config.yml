@@ -17,7 +17,7 @@ jobs:
       - checkout
       - run: docker-compose build fwanalyzer
       - run: docker-compose run --rm fwanalyzer make deps 
-      - run: docker-compose run --rm fwanalyzer make testsetup test
+      - run: docker-compose run --rm fwanalyzer make testsetup ci-tests
 
 workflows:
   version: 2

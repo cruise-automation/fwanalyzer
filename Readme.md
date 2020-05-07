@@ -175,6 +175,9 @@ Example Output:
 
 With links we refer to soft links.
 Links can point to files on a different filesystem, therefore, we handle links in a special way.
+Link handling requires a patched version of e2tools:
+
+- [e2tools](https://github.com/crmulliner/e2tools/tree/link_support) with link support
 
 `FileStatCheck` will handle links like you would expect it.
 However if `AllowEmpty` is `false` and the file is a link the check fails.
@@ -192,7 +195,7 @@ Any variation of the configuration will be reported as an offender.
 - `Gid` : int, (optional) specifies the GID of the file, not specifying a GID or specifying -1 will skip the check
 - `Mode` : string, (optional) specifies the UN*X file mode/permissions in octal, not specifying a mode will skip the check
 - `SELinuxLabel` : string, (optional) the SELinux label of the file (will skip the check if not set)
-- `LinkTarget` : string, (optional) the target of a symlink, not specifying a link target will skip the check. This is currently supported for `dirfs`, `squashfs`, `cpiofs`, and `ubifs` filesystems.
+- `LinkTarget` : string, (optional) the target of a symlink, not specifying a link target will skip the check. This is currently supported for `dirfs`, `squashfs`, `cpiofs`, `ubifs`, and `extfs` filesystems.
 - `Capability` : string array, (optional) list of capabilities (e.g. cap_net_admin+p).
 
 - `Desc` : string, (optional) is a descriptive string that will be attached to the report if there is a failed check

@@ -45,7 +45,7 @@ const (
 func New(imagepath string, selinux, capabilities bool) *Ext2Parser {
 	parser := &Ext2Parser{
 		// 365  120777     0     0        7 12-Jul-2018 10:15 true
-		regexString:  `^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+-\w+-\d+)\s+(\d+:\d+)\s+(\S+)`,
+		regexString:  `^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+-\w+-\d+)\s+(\d+:\d+)\s+([\S ]+)`,
 		imagepath:    imagepath,
 		selinux:      false,
 		capabilities: false,
@@ -71,7 +71,7 @@ func (e *Ext2Parser) enableSeLinux() {
 	// `^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+-\w+-\d+)\s+(\d+:\d+)\s+(\S+)\s+(\S+)`)
 
 	// append selinux part
-	e.regexString = e.regexString + `\s+(\S+)`
+	e.regexString = e.regexString + `\t\s+(\S+)`
 	e.selinux = true
 }
 
@@ -80,6 +80,10 @@ func (e *Ext2Parser) enableCapabilities() {
 	// 2600  100750     0  2000     1041   1-Jan-2009 03:00 init.environ.rc 0x2000001,0x0,0x0,0x0,0x0
 	// `^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+-\w+-\d+)\s+(\d+:\d+)\s+(\S+)\s+(\S+)`)
 
+	// tab is the separator for security options
+	if !e.selinux {
+		e.regexString = e.regexString + `\t`
+	}
 	// append capability part
 	e.regexString = e.regexString + `\s+(\S+)`
 	e.capabilities = true
@@ -94,6 +98,12 @@ func (e *Ext2Parser) parseFileLine(line string) fsparser.FileInfo {
 	fi.Uid, _ = strconv.Atoi(res[0][3])
 	fi.Gid, _ = strconv.Atoi(res[0][4])
 	fi.Name = res[0][8]
+
+	if fi.IsLink() && strings.Contains(fi.Name, " -> ") {
+		parts := strings.Split(fi.Name, " -> ")
+		fi.Name = parts[0]
+		fi.LinkTarget = parts[1]
+	}
 
 	if e.selinux {
 		fi.SELinuxLabel = res[0][9]

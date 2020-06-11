@@ -59,7 +59,7 @@ func TestGlobal(t *testing.T) {
 	cfg := `
 [GlobalFileChecks]
 Suid = true
-SuidWhiteList = ["/shouldbesuid"]
+SuidAllowedList = ["/shouldbesuid"]
 SeLinuxLabel = true
 WorldWrite = true
 Uids = [0]
@@ -79,7 +79,7 @@ FlagCapabilityInformationalOnly = true
 		{fsparser.FileInfo{Name: "suid", Mode: 0004000}, "/", true},
 		{fsparser.FileInfo{Name: "sgid", Mode: 0002000}, "/", true},
 		{fsparser.FileInfo{Name: "sgid", Mode: 0000000}, "/", false},
-		// Whitelisted
+		// allowed suid files
 		{fsparser.FileInfo{Name: "shouldbesuid", Mode: 0004000}, "/", false},
 		// World write
 		{fsparser.FileInfo{Name: "ww", Mode: 0007}, "/", true},

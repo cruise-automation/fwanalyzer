@@ -9,7 +9,7 @@ DigestImage = true
 [GlobalFileChecks]
 Suid = true
 # run-as is a common suid binary
-SuidWhiteList = ["/system/bin/runs-as"]
+SuidAllowedList = ["/system/bin/runs-as"]
 # enable SeLinux checks
 SeLinuxLabel = true
 # system is mounted read-only

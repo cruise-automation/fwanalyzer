@@ -141,7 +141,7 @@ Example:
 
 The `GlobalFileChecks` are more general checks that are applied to the entire filesystem.
 - `Suid`: bool, (optional) if enabled the analysis will fail if any file has the sticky bit set (default: false)
-- `SuidWhiteList`: string array, (optional) allows whitelisting files (by full path) for the Suid check
+- `SuidAllowedList`: string array, (optional) allows Suid files (by full path) for the Suid check
 - `WorldWrite`: bool, (optional) if enabled the analysis will fail if any file can be written to by any user (default: false)
 - `SELinuxLabel`: string, (optional) if enabled the analysis will fail if a file does NOT have an SeLinux label
 - `Uids` : int array, (optional) specifies every allowed UID in the system, every file needs to be owned by a Uid specified in this list
@@ -154,7 +154,7 @@ Example:
 ```toml
 [GlobalFileChecks]
 Suid          = true
-SuidWhiteList = ["/bin/sudo"]
+SuidAllowedList = ["/bin/sudo"]
 SELinuxLabel  = false
 WorldWrite    = true
 Uids          = [0,1001,1002]

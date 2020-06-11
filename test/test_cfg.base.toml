@@ -3,7 +3,7 @@
 
 [GlobalFileChecks]
 Suid = true
-SuidWhiteList = []
+SuidAllowedList = []
 SeLinuxLabel = false
 WorldWrite = true
 Uids = [0,1001,1002]

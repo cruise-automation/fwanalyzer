@@ -29,7 +29,7 @@ import (
 
 type filePermsConfigType struct {
 	Suid                            bool
-	SuidWhiteList                   map[string]bool
+	SuidAllowedList                 map[string]bool
 	WorldWrite                      bool
 	SELinuxLabel                    bool
 	Uids                            map[int]bool
@@ -47,7 +47,8 @@ type filePermsType struct {
 func New(config string, a analyzer.AnalyzerType) *filePermsType {
 	type filePermsConfig struct {
 		Suid                            bool
-		SuidWhiteList                   []string
+		SuidWhiteList                   []string // keep for backward compatibility
+		SuidAllowedList                 []string
 		WorldWrite                      bool
 		SELinuxLabel                    bool
 		Uids                            []int
@@ -72,9 +73,13 @@ func New(config string, a analyzer.AnalyzerType) *filePermsType {
 		BadFilesInformationalOnly:       conf.GlobalFileChecks.BadFilesInformationalOnly,
 		FlagCapabilityInformationalOnly: conf.GlobalFileChecks.FlagCapabilityInformationalOnly,
 	}
-	configuration.SuidWhiteList = make(map[string]bool)
+	configuration.SuidAllowedList = make(map[string]bool)
+	for _, alfn := range conf.GlobalFileChecks.SuidAllowedList {
+		configuration.SuidAllowedList[path.Clean(alfn)] = true
+	}
+	// keep for backward compatibility
 	for _, wlfn := range conf.GlobalFileChecks.SuidWhiteList {
-		configuration.SuidWhiteList[path.Clean(wlfn)] = true
+		configuration.SuidAllowedList[path.Clean(wlfn)] = true
 	}
 	configuration.Uids = make(map[int]bool)
 	for _, uid := range conf.GlobalFileChecks.Uids {
@@ -107,7 +112,7 @@ func (state *filePermsType) Name() string {
 func (state *filePermsType) CheckFile(fi *fsparser.FileInfo, fpath string) error {
 	if state.config.Suid {
 		if fi.IsSUid() || fi.IsSGid() {
-			if _, ok := state.config.SuidWhiteList[path.Join(fpath, fi.Name)]; !ok {
+			if _, ok := state.config.SuidAllowedList[path.Join(fpath, fi.Name)]; !ok {
 				state.a.AddOffender(path.Join(fpath, fi.Name), "File is SUID, not allowed")
 			}
 		}

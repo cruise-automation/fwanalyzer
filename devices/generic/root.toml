@@ -6,7 +6,7 @@ DigestImage = true
 
 [GlobalFileChecks]
 Suid = true
-SuidWhiteList = []
+SuidAllowedList = []
 # disable SELinux checks
 SeLinuxLabel = false
 # flag world writable files

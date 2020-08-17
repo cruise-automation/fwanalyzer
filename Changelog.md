@@ -5,6 +5,9 @@ Always update Version in Makefile
 
 ## Unreleased
 
+### Changed
+- support older versions of checksec
+
 ## [v1.4.2] - 2020-08-17
 
 ### Added

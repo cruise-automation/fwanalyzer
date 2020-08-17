@@ -86,7 +86,7 @@ It also includes general configuration files that can be included in target spec
 
 Check.py in the [devices/](devices) folder provides a universal script to effectively use FwAnalyzer, see [devices/Readme.md](devices/Readme.md) for details. This likely is how most people will invoke FwAnalyzer.
 
-The [scripts/](scripts/) folder contains helper scripts that can be called from FwAnalyzer for file content analysis and data extraction.
+The [scripts/](scripts/) folder contains helper scripts that can be called from FwAnalyzer for file content analysis and data extraction. Most interesting should be our checksec wrapper [check_sec.sh](scripts/check_sc.sh), see the [Checksec Wrapper Readme](Checksec.md).
 
 ## Config Options
 

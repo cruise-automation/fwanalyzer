@@ -5,6 +5,8 @@ Always update Version in Makefile
 
 ## Unreleased
 
+## [v1.4.2] - 2020-08-17
+
 ### Added
 - checksec wrapper script, see [check_sec.sh](scripts/check_sec.sh) and [Checksec Wrapper Readme](Checksec.md)
 - link support for extfs, this requires `https://github.com/crmulliner/e2tools/tree/link_support` (or later)

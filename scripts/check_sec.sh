@@ -47,13 +47,23 @@ res = os.getenv("RESULT")
 fp = os.getenv("FILEPATH")
 orig_name = os.getenv("ORIG_FILENAME")
 
+expected = {}
+
 try:
   expected = json.loads(cfg.rstrip())
+except Exception:
+  print("bad config: {}".format(cfg.rstrip()))
+  sys.exit(1)
+
+try:
   result = json.loads(res.rstrip())
- 
+
   if "skip" in expected: 
     if orig_name in expected["skip"]:
       sys.exit(0)
+
+  if not fp in result:
+    fp = "file"
 
   for k in expected["cfg"]:
     if k in result[fp]:
@@ -65,8 +75,10 @@ try:
       if not passed:
         print(json.dumps(result[fp]).rstrip())
         sys.exit(0)
+
 except Exception as e:
-  pass
+  if not "Not an ELF file:" in res:
+     print(e)
 
 sys.exit(0)
 '

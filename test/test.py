@@ -84,7 +84,7 @@ def test(cfgfile, e2toolspath=""):
         if not "File State Check failed: size: 0 AllowEmpyt=false : this needs to be this way" in data["offenders"]["/file1"]:
             SetError("file1 exists but size 0")
 
-        if not "elf_x8664 is not stripped" in data["offenders"]["/bin/elf_x8664"]:
+        if not "/bin/elf_x8664 is not stripped" in data["offenders"]["/bin/elf_x8664"]:
             SetError("script failed")
 
     if not "informational" in data:

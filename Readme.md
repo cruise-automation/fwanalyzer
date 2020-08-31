@@ -302,7 +302,7 @@ The check produces an offender if the script produced output on stdout or stderr
 If the `--` is present it indicates that the next argument is from the `ScriptOptions[1..N]`. The script is run with the following arguments:
 
 ```
-<tmp filename> <original filename> <uid> <gid> <mode in octal> <selinux label or "-" for no label> [--] [script argument 1] ... [script argument N]
+<tmp filename> <original filename (fullpath)> <uid> <gid> <mode in octal> <selinux label or "-" for no label> [--] [script argument 1] ... [script argument N]
 ```
 
 Example:
@@ -496,7 +496,7 @@ this statement, the example below is named LastLine.
 The script is run with the following arguments:
 
 ```
-<tmp filename> <original filename> <uid> <gid> <mode in octal> <selinux label or "-" for no label> [--] [script argument 1] ... [script argument N]
+<tmp filename> <original filename (fullpath)> <uid> <gid> <mode in octal> <selinux label or "-" for no label> [--] [script argument 1] ... [script argument N]
 ```
 
 Example:

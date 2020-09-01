@@ -5,6 +5,11 @@ Always update Version in Makefile
 
 ## Unreleased
 
+### Changed
+- updated Building.md
+- updated Readme.md
+- Scripts now get the full filepath as second argument (before it would pass `bash` now it would pass `/bin/bash`)
+
 ## [v1.4.3] - 2020-08-17
 
 ### Changed

@@ -298,6 +298,8 @@ type callbackDataType struct {
 func checkFileScript(fi *fsparser.FileInfo, fullpath string, cbData analyzer.AllFilesCallbackData) {
 	cbd := cbData.(*callbackDataType)
 
+	fullname := path.Join(fullpath, fi.Name)
+
 	// skip/ignore anything but normal files
 	if !fi.IsFile() || fi.IsLink() {
 		return
@@ -315,8 +317,14 @@ func checkFileScript(fi *fsparser.FileInfo, fullpath string, cbData analyzer.All
 		}
 	}
 
-	fname, _ := cbd.state.a.FileGet(path.Join(fullpath, fi.Name))
-	args := []string{fname, fi.Name, fmt.Sprintf("%d", fi.Uid), fmt.Sprintf("%d", fi.Gid), fmt.Sprintf("%o", fi.Mode), fi.SELinuxLabel}
+	fname, _ := cbd.state.a.FileGet(fullname)
+	args := []string{fname,
+		fullname,
+		fmt.Sprintf("%d", fi.Uid),
+		fmt.Sprintf("%d", fi.Gid),
+		fmt.Sprintf("%o", fi.Mode),
+		fi.SELinuxLabel,
+	}
 	if len(cbd.scriptOptions) >= 2 {
 		args = append(args, "--")
 		args = append(args, cbd.scriptOptions[1:]...)
@@ -324,7 +332,7 @@ func checkFileScript(fi *fsparser.FileInfo, fullpath string, cbData analyzer.All
 
 	out, err := exec.Command(cbd.script, args...).CombinedOutput()
 	if err != nil {
-		cbd.state.a.AddOffender(path.Join(fullpath, fi.Name), fmt.Sprintf("script(%s) error=%s", cbd.script, err))
+		cbd.state.a.AddOffender(fullname, fmt.Sprintf("script(%s) error=%s", cbd.script, err))
 	}
 
 	err = cbd.state.a.RemoveFile(fname)
@@ -334,9 +342,9 @@ func checkFileScript(fi *fsparser.FileInfo, fullpath string, cbData analyzer.All
 
 	if len(out) > 0 {
 		if cbd.informationalOnly {
-			cbd.state.a.AddInformational(path.Join(fullpath, fi.Name), string(out))
+			cbd.state.a.AddInformational(fullname, string(out))
 		} else {
-			cbd.state.a.AddOffender(path.Join(fullpath, fi.Name), string(out))
+			cbd.state.a.AddOffender(fullname, string(out))
 		}
 	}
 }

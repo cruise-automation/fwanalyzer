@@ -22,7 +22,6 @@ import (
 	"io/ioutil"
 	"os/exec"
 	"path"
-	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -213,7 +212,7 @@ func runScriptOnFile(a analyzer.AnalyzerType, script string, scriptOptions []str
 	if err != nil {
 		return "", err
 	}
-	options := []string{fname, filepath.Base(fpath), fmt.Sprintf("%d", fi.Uid), fmt.Sprintf("%d", fi.Gid),
+	options := []string{fname, fpath, fmt.Sprintf("%d", fi.Uid), fmt.Sprintf("%d", fi.Gid),
 		fmt.Sprintf("%o", fi.Mode), fi.SELinuxLabel}
 	if len(scriptOptions) > 0 {
 		options = append(options, "--")

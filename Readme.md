@@ -344,9 +344,9 @@ Example Input:
     "Info": "customized"
   }
 }
+```
 
 Example Output:
-
 ```json
 "offenders": {
   "/system.json": [ "Json field System.Arch = arm32 did not match = arm64, System.Arch, arch test" ],

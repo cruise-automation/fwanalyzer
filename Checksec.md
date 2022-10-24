@@ -30,7 +30,7 @@ example config:
   {
     "pie": ["yes"],
     "nx": ["yes"],
-    "relo": ["full", "partial"]
+    "relro": ["full", "partial"]
   },
   "skip": ["/usr/bin/bla","/bin/blabla"]
 }
@@ -55,7 +55,7 @@ ScriptOptions = ["*",
 "cfg":{
   "pie": ["yes"],
   "nx": ["yes"],
-  "relo": ["full", "partial"]
+  "relro": ["full", "partial"]
  },
  "skip": ["/usr/bin/bla","/bin/blabla"]
 }

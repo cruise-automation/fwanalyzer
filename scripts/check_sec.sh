@@ -19,8 +19,8 @@ export ORIG_FILENAME
 # array for values allows multiple acceptable values
 # {"cfg":
 #  {
-#    "pie": ["yes"], 
-#    "relo": ["full", "partial"] 
+#    "pie": ["yes"],
+#    "relro": ["full", "partial"]
 #  },
 #  "skip": ["/usr/bin/bla"]
 # }
@@ -58,13 +58,14 @@ except Exception:
 try:
   result = json.loads(res.rstrip())
 
-  if "skip" in expected: 
+  if "skip" in expected:
     if orig_name in expected["skip"]:
       sys.exit(0)
 
   if not fp in result:
     fp = "file"
 
+  bad_keys = []
   for k in expected["cfg"]:
     if k in result[fp]:
       passed = False
@@ -75,6 +76,12 @@ try:
       if not passed:
         print(json.dumps(result[fp]).rstrip())
         sys.exit(0)
+    else:
+      bad_keys.append(k)
+
+  if bad_keys:
+    print("results were missing expected keys: {}".format(", ".join(bad_keys)))
+    sys.exit(0)
 
 except Exception as e:
   if not "Not an ELF file:" in res:

@@ -38,16 +38,12 @@ integration-test: build
 	PATH="$(PWD)/scripts:$(PWD)/test:$(PWD)/build:$(PATH)" ./test/test.py
 
 .PHONY: ci-tests
-ci-tests: lint build test integration-test
+ci-tests: build test integration-test
 	echo "done"
 
 .PHONY: modules
 modules:
 	go mod tidy
-
-.PHONY: lint
-lint:
-	golangci-lint run
 
 .PHONY: deploy
 deploy: build

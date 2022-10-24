@@ -17,11 +17,15 @@ SELinux/Capability support for SquashFS images requires a patched version of [sq
 
 ## Overview
 
-The main idea of FwAnalyzer is to provide a tool for rapid analysis of filesystem images as part of a firmware security Q&A check suite.
-FwAnalyzer takes a configuration file that defines various rules for files and directories and runs the configured checks against a given filesystem image.
-The output of FwAnalyzer is a report, which contains the list of files that violate any of the rules specified in the configuration.
-The report further contains meta information about the filesystem image and, if configured, information extracted from files within the analyzed filesystem.
-The report is formatted using JSON so it can be easily integrated as a step in a larger analysis.
+The main idea of **FwAnalyzer** is to provide a tool for rapid analysis of
+filesystem images as part of a firmware security Q&A check suite. FwAnalyzer
+takes a configuration file that defines various rules for files and directories
+and runs the configured checks against a given filesystem image. The output of
+FwAnalyzer is a report, which contains the list of files that violate any of
+the rules specified in the configuration. The report further contains meta
+information about the filesystem image and, if configured, information
+extracted from files within the analyzed filesystem. The report is formatted
+using JSON so it can be easily integrated as a step in a larger analysis.
 
 Example report:
 
@@ -58,13 +62,14 @@ Example report:
 
 ## Building and Development
 
-Follow the steps described in [Building](Building.md) to install all requirements and build FwAnalyzer.
+Follow the steps described in [Building](Building.md) to install all
+requirements and build FwAnalyzer.
 
 ## Using FwAnalyzer
 
 Command line options
 - `-cfg`         : string, path to the config file
-- `-cfgpath`     : string, path to config file and included files (can be repated)
+- `-cfgpath`     : string, path to config file and included files (can be repeated)
 - `-in`          : string, filesystem image file or path to directory
 - `-out`         : string, output report to file or stdout using '-'
 - `-extra`       : string, overwrite directory to read extra data from (e.g. filetree, filecmp)
@@ -76,17 +81,24 @@ Example:
 fwanalyzer -cfg system_fwa.toml -in system.img -out system_check_output.json
 ```
 
-Example for using custom scripts stored in the `scripts` directory:
+Example for using custom scripts stored in the _scripts/_ directory:
 ```sh
 PATH=$PATH:./scripts fwanalyzer -cfg system_fwa.toml -in system.img -out system_check_output.json
 ```
 
-The [devices/](devices/) folder contains helper scripts for unpacking and dealing with specific device types and firmware package formats such as [Android](devices/android).
-It also includes general configuration files that can be included in target specific FwAnalyzer configurations.
+The [_devices/_](devices/) folder contains helper scripts for unpacking and
+dealing with specific device types and firmware package formats such as
+[Android](devices/android). It also includes general configuration files that
+can be included in target specific FwAnalyzer configurations.
 
-Check.py in the [devices/](devices) folder provides a universal script to effectively use FwAnalyzer, see [devices/Readme.md](devices/Readme.md) for details. This likely is how most people will invoke FwAnalyzer.
+_check.py_ in the [_devices/_](devices) folder provides a universal script to
+effectively use FwAnalyzer, see [devices/Readme.md](devices/Readme.md) for
+details. This likely is how most people will invoke FwAnalyzer.
 
-The [scripts/](scripts/) folder contains helper scripts that can be called from FwAnalyzer for file content analysis and data extraction. Most interesting should be our checksec wrapper [check_sec.sh](scripts/check_sc.sh), see the [Checksec Wrapper Readme](Checksec.md).
+The [_scripts/_](scripts/) folder contains helper scripts that can be called
+from FwAnalyzer for file content analysis and data extraction. Most interesting
+should be our checksec wrapper [_check_sec.sh_](scripts/check_sc.sh), see the
+[Checksec Wrapper Readme](Checksec.md).
 
 ## Config Options
 
@@ -94,7 +106,8 @@ The [scripts/](scripts/) folder contains helper scripts that can be called from 
 
 The global config is used to define some general parameters.
 
-The `FsType` (filesystem type) field selects the backend that is used to access the files in the image. The supported options for FsType are:
+The `FsType` (filesystem type) field selects the backend that is used to access
+the files in the image. The supported options for FsType are:
 
 - `dirfs`: to read files from a directory on the host running fwanalyzer, supports Capabilities (supported FsTypeOptions are: N/A)
 - `extfs`: to read ext2/3/4 filesystem images (supported FsTypeOptions are: `selinux` and `capabilities`)
@@ -109,7 +122,8 @@ The FsTypeOptions allow tuning of the FsType driver.
 - `selinux`: will enable selinux support when reading ext filesystem images
 - `fixdirs`: will attempt to work around a cpio issue where a file exists in a directory while there is no entry for the directory itself
 
-The `DigestImage` option will generate a SHA-256 digest of the filesystem image that was analyzed, the digest will be included in the output.
+The `DigestImage` option will generate a SHA-256 digest of the filesystem image
+that was analyzed, the digest will be included in the output.
 
 Example:
 ```toml
@@ -128,8 +142,10 @@ Example Output:
 
 ### Include
 
-The `Include` statement is used to include other FwAnalyzer configuration files into the configuration containing the statement.
-The include statement can appear in any part of the configuration.
+The `Include` statement is used to include other FwAnalyzer configuration files
+into the configuration containing the statement. The include statement can
+appear in any part of the configuration.
+
 The `-cfgpath` parameter sets the search path for include files.
 
 Example:
@@ -144,11 +160,11 @@ The `GlobalFileChecks` are more general checks that are applied to the entire fi
 - `SuidAllowedList`: string array, (optional) allows Suid files (by full path) for the Suid check
 - `WorldWrite`: bool, (optional) if enabled the analysis will fail if any file can be written to by any user (default: false)
 - `SELinuxLabel`: string, (optional) if enabled the analysis will fail if a file does NOT have an SeLinux label
-- `Uids` : int array, (optional) specifies every allowed UID in the system, every file needs to be owned by a Uid specified in this list
-- `Gids` : int array, (optional) specifies every allowed GID in the system, every file needs to be owned by a Gid specified in this list
-- `BadFiles` : string array, (optional) specifies a list of unwanted files, allows wildcards such as `?`, `*`, and `**` (no file in this list should exist)
-- `BadFilesInformationalOnly` : bool, (optional) the result of the BadFile check will be Informational only (default: false)
-- `FlagCapabilityInformationalOnly` : bool, (optional) flag files for having a Capability set as Informational (default: false)
+- `Uids`: int array, (optional) specifies every allowed UID in the system, every file needs to be owned by a Uid specified in this list
+- `Gids`: int array, (optional) specifies every allowed GID in the system, every file needs to be owned by a Gid specified in this list
+- `BadFiles`: string array, (optional) specifies a list of unwanted files, allows wildcards such as `?`, `*`, and `**` (no file in this list should exist)
+- `BadFilesInformationalOnly`: bool, (optional) the result of the BadFile check will be Informational only (default: false)
+- `FlagCapabilityInformationalOnly`: bool, (optional) flag files for having a Capability set as Informational (default: false)
 
 Example:
 ```toml
@@ -173,33 +189,42 @@ Example Output:
 
 ### Link Handling
 
-With links we refer to soft links.
-Links can point to files on a different filesystem, therefore, we handle links in a special way.
-Link handling requires a patched version of e2tools:
+With links we refer to soft links. Links can point to files on a different
+filesystem, therefore, we handle them in a special way. Link handling requires
+a patched version of e2tools:
 
 - [e2tools](https://github.com/crmulliner/e2tools/tree/link_support) with link support
 
-`FileStatCheck` will handle links like you would expect it.
-However if `AllowEmpty` is `false` and the file is a link the check fails.
+`FileStatCheck` will handle links like you would expect it. However if
+`AllowEmpty` is `false` and the file is a link then the check fails.
 
-All other checks and dataextract will fail if the file is a link.
-Those checks need to be pointed to the actual file (the file the link points to).
+All other checks and dataextract will fail if the file is a link. Those checks
+need to be pointed to the actual file (the file the link points to).
 
 ### File Stat Check
 
-The `FileStatCheck` can be used to model the metadata for a specific file or directory.
-Any variation of the configuration will be reported as an offender.
+The `FileStatCheck` can be used to model the metadata for a specific file or
+directory. Any variation of the configuration will be reported as an offender.
 
-- `AllowEmpty` : bool, (optional) defines that the file can have zero size will cause error if file is link (default: false)
-- `Uid` : int, (optional) specifies the UID of the file, not specifying a UID or specifying -1 will skip the check
-- `Gid` : int, (optional) specifies the GID of the file, not specifying a GID or specifying -1 will skip the check
-- `Mode` : string, (optional) specifies the UN*X file mode/permissions in octal, not specifying a mode will skip the check
-- `SELinuxLabel` : string, (optional) the SELinux label of the file (will skip the check if not set)
-- `LinkTarget` : string, (optional) the target of a symlink, not specifying a link target will skip the check. This is currently supported for `dirfs`, `squashfs`, `cpiofs`, `ubifs`, and `extfs` filesystems.
-- `Capability` : string array, (optional) list of capabilities (e.g. cap_net_admin+p).
-
-- `Desc` : string, (optional) is a descriptive string that will be attached to the report if there is a failed check
-- `InformationalOnly` : bool, (optional) the result of the check will be Informational only (default: false)
+- `AllowEmpty`: bool, (optional) defines that the file can have zero size will
+  cause error if file is link (default: false)
+- `Uid`: int, (optional) specifies the UID of the file, not specifying a UID or
+  specifying -1 will skip the check
+- `Gid`: int, (optional) specifies the GID of the file, not specifying a GID or
+  specifying -1 will skip the check
+- `Mode`: string, (optional) specifies the UN*X file mode/permissions in octal,
+  not specifying a mode will skip the check
+- `SELinuxLabel`: string, (optional) the SELinux label of the file (will skip
+  the check if not set)
+- `LinkTarget`: string, (optional) the target of a symlink, not specifying a
+  link target will skip the check. This is currently supported for `dirfs`,
+  `squashfs`, `cpiofs`, `ubifs`, and `extfs` filesystems.
+- `Capability`: string array, (optional) list of capabilities (e.g.
+  cap_net_admin+p).
+- `Desc`: string, (optional) is a descriptive string that will be attached to
+  the report if there is a failed check
+- `InformationalOnly`: bool, (optional) the result of the check will be
+  Informational only (default: false)
 
 Example:
 ```toml
@@ -220,7 +245,10 @@ Example Output:
 
 ### File Path Owner Check
 
-The `FilePathOwner` check can be used to model the file/directory ownership for a entire tree of the filesystem. The check fails if any file or directory with in the given directory is not owned by the specified `Uid` and `Gid`  (type: int).
+The `FilePathOwner` check can be used to model the file/directory ownership for
+a entire tree of the filesystem. The check fails if any file or directory with
+in the given directory is not owned by the specified `Uid` and `Gid`  (type:
+int).
 
 Example:
 ```toml
@@ -247,13 +275,16 @@ offender.
 
 #### Example: Regular Expression on entire file body
 
-- `File` : string, the full path of the file
-- `RegEx` : string, posix/golang regular expression
-- `RegExLineByLine` : bool, (optional) apply regex on a line by line basis, matching line will be in result (default: false)
-- `Match` : bool, (optional) indicate if the regular expression should match or not match (default: false)
-
-- `Desc` : string, (optional) is a descriptive string that will be attached to failed check
-- `InformationalOnly` : bool, (optional) the result of the check will be Informational only (default: false)
+- `File`: string, the full path of the file
+- `RegEx`: string, posix/golang regular expression
+- `RegExLineByLine`: bool, (optional) apply regex on a line by line basis,
+  matching line will be in result (default: false)
+- `Match`: bool, (optional) indicate if the regular expression should match or
+  not match (default: false)
+- `Desc`: string, (optional) is a descriptive string that will be attached to
+  failed check
+- `InformationalOnly`: bool, (optional) the result of the check will be
+  Informational only (default: false)
 
 Example:
 ```toml
@@ -265,11 +296,12 @@ File  = "/etc/version"
 
 #### Example: SHA-256 digest calculated over the file body
 
-- `File` : string, the full path of the file
-- `Digest` : string, HEX encoded digest
-
-- `Desc` : string, (optional) is a descriptive string that will be attached to failed check
-- `InformationalOnly` : bool, (optional) the result of the check will be Informational only
+- `File`: string, the full path of the file
+- `Digest`: string, HEX encoded digest
+- `Desc`: string, (optional) is a descriptive string that will be attached to
+  failed check
+- `InformationalOnly`: bool, (optional) the result of the check will be
+  Informational only
 
 Example:
 ```toml
@@ -288,18 +320,27 @@ Example Output:
 
 #### Example: Run an external script passing the filename to the script
 
-The file is extracted into a temp directory with a temp name before the script is executed.
-The check produces an offender if the script produced output on stdout or stderr.
+The file is extracted into a temp directory with a temp name before the script
+is executed. The check produces an offender if the script produced output on
+stdout or stderr.
 
-- `File` : string, the full path of the file or directory
-- `Script` : string, the full path of the script
-- `ScriptOptions` : string array, (optional) the first element allows to define a pattern containing wildcards like `?`, `*`, and `**` that is applied to filenames if present it will only check files that match the pattern, this is mostly useful when running the script on a directory. Arguments can be passed to the script using the second and following elements.
-- `File` : string, the full path of the file, if the path points to a directory the script is run for every file in the directory and subdirectories
+- `File`: string, the full path of the file or directory
+- `Script`: string, the full path of the script
+- `ScriptOptions`: string array, (optional) the first element allows to define
+  a pattern containing wildcards like `?`, `*`, and `**` that is applied to
+  filenames if present it will only check files that match the pattern, this is
+  mostly useful when running the script on a directory. Arguments can be passed
+  to the script using the second and following elements.
+- `File`: string, the full path of the file, if the path points to a directory
+  the script is run for every file in the directory and subdirectories
 
-- `Desc` : string, (optional) is a descriptive string that will be attached to failed check
-- `InformationalOnly` : bool, (optional) the result of the check will be Informational only (default: false)
+- `Desc`: string, (optional) is a descriptive string that will be attached to
+  failed check
+- `InformationalOnly`: bool, (optional) the result of the check will be
+  Informational only (default: false)
 
-If the `--` is present it indicates that the next argument is from the `ScriptOptions[1..N]`. The script is run with the following arguments:
+If the `--` is present it indicates that the next argument is from the
+`ScriptOptions[1..N]`. The script is run with the following arguments:
 
 ```
 <tmp filename> <original filename (fullpath)> <uid> <gid> <mode in octal> <selinux label or "-" for no label> [--] [script argument 1] ... [script argument N]
@@ -321,11 +362,15 @@ Example Output:
 
 #### Json Field Compare
 
-- `File` : string, the full path of the file
-- `Json` : string, the field name using the dot (.) notation to access a field within an object with a colon (:) separating the required value. All types will be converted to string and compared as a string. Json arrays can be index by supplying the index instead of a field name.
-
-- `Desc` : string, (optional) is a descriptive string that will be attached to failed check
-- `InformationalOnly` : bool, (optional) the result of the check will be Informational only (default: false)
+- `File`: string, the full path of the file
+- `Json`: string, the field name using the dot (.) notation to access a field
+  within an object with a colon (:) separating the required value. All types
+  will be converted to string and compared as a string. Json arrays can be
+  index by supplying the index instead of a field name.
+- `Desc`: string, (optional) is a descriptive string that will be attached to
+  failed check
+- `InformationalOnly`: bool, (optional) the result of the check will be
+  Informational only (default: false)
 
 Example:
 ```toml
@@ -355,22 +400,23 @@ Example Output:
 
 ### File Compare Check
 
-The `FileCmp` (File Compare) check is a mechanism to compare a file from a previous 
-run with the file from the current run. The main idea behind this check is to provide
-more insights into file changes, since it allows comparing two versions of a file rather than
-comparing only a digest.
+The `FileCmp` (File Compare) check is a mechanism to compare a file from a
+previous run with the file from the current run. The main idea behind this
+check is to provide more insights into file changes, since it allows comparing
+two versions of a file rather than comparing only a digest.
 
-This works by saving the file as the `OldFilePath` 
-(if it does not exist) and skipping the check at the first run. In consecutive runs
-the current file and the saved old file will be copied to a temp directory. The script will
-be executed passing the original filename, the path to the old file and the path to the current file
-as arguments. If the script prints output the check will be marked as failed.
+This works by saving the file as the `OldFilePath` (if it does not exist) and
+skipping the check at the first run. In consecutive runs the current file and
+the saved old file will be copied to a temp directory. The script will be
+executed passing the original filename, the path to the old file and the path
+to the current file as arguments. If the script prints output the check will be
+marked as failed.
 
-- `File` : string, the full path of the file
+- `File`: string, the full path of the file
 - `Script`: string, path to the script
 - `ScriptOptions`: string array, (optional) arguments passed to the script
 - `OldFilePath`: string, filename (absolute or relative) to use to store old file
-- `InformationalOnly` : bool, (optional) the result of the check will be Informational only (default: false)
+- `InformationalOnly`: bool, (optional) the result of the check will be Informational only (default: false)
 
 Script runs as:
 ```sh
@@ -445,24 +491,25 @@ Required = ["chris"]
 
 ### Data Extract
 
-The `DataExtract` option allows extracting data from a file and including it in the report.
-Data can be extracted via regular expression, by running an external script, or by reading a JSON object.
-The extracted data can later be used by the post processing script.
+The `DataExtract` option allows extracting data from a file and including it in
+the report.  Data can be extracted via regular expression, by running an
+external script, or by reading a JSON object. The extracted data can later be
+used by the post processing script.
 
-The Data Extract functionality adds the data to the report as a map of key:value pairs.
-The key is defined as the name of the statement or by the optional Name parameter.
-The value is the result of the regular expression or the output of the script.
+The Data Extract functionality adds the data to the report as a map of
+key:value pairs.  The key is defined as the name of the statement or by the
+optional Name parameter.  The value is the result of the regular expression or
+the output of the script.
 
 #### Example: Regular expression based data extraction
 
 The output generated by the regular expression will be stored as the value for
 the name of this statement, the example below is named "Version".
 
-- `File` : string, the full path of the file
-- `RegEx` : string, regular expression with one matching field
-- `Name` : string, (optional) the key name
-
-- `Desc` : string, (optional) description
+- `File`: string, the full path of the file
+- `RegEx`: string, regular expression with one matching field
+- `Name`: string, (optional) the key name
+- `Desc`: string, (optional) description
 
 Example:
 
@@ -486,12 +533,11 @@ Example Output:
 The output generated by the script will be stored as the value for the name of
 this statement, the example below is named LastLine.
 
-- `File` : string, the full path of the file
-- `Script` :string, the full path of the script
-- `ScriptOptions` : string array (optionl), arguments to pass to the script
-- `Name` : string, (optional) the key name
-
-- `Desc` : string, (optional) description
+- `File`: string, the full path of the file
+- `Script`:string, the full path of the script
+- `ScriptOptions`: string array (optionl), arguments to pass to the script
+- `Name`: string, (optional) the key name
+- `Desc`: string, (optional) description
 
 The script is run with the following arguments:
 
@@ -501,7 +547,9 @@ The script is run with the following arguments:
 
 Example:
 
-The key "script_test" will contain the output of the script. The name of this statement is "scripttest"
+The key "script_test" will contain the output of the script. The name of this
+statement is "scripttest"
+
 ```toml
 [DataExtract.scripttest]
 File   = "/etc/somefile"
@@ -510,6 +558,7 @@ Name   = "script_test"
 ```
 
 Example Output:
+
 ```json
 "data": {
   "script_test": "some data",
@@ -521,15 +570,17 @@ Example Output:
 The output generated by the script will be stored as the value for
 the name of this statement, the example below is named LastLine.
 
-- `File` : string, the full path of the file
-- `Json` : string, the field name using the dot (.) notation to access a field within an object
-
-- `Name` : string, (optional) the key name
-- `Desc` : string, (optional) description
+- `File`: string, the full path of the file
+- `Json`: string, the field name using the dot (.) notation to access a field
+  within an object
+- `Name`: string, (optional) the key name
+- `Desc`: string, (optional) description
 
 Example:
 
-The key "OS_Info" will containt the content of the Info field from the System object from /etc/os_version.json below.
+The key "OS_Info" will containt the content of the Info field from the System
+object from _/etc/os_version.json_ below.
+
 ```json
 {
   "System": {
@@ -558,13 +609,15 @@ Json arrays can be indexed by supplying the index instead of a field name.
 
 #### Example: Advanced usage
 
-The `DataExtract` statement allows multiple entries with the same Name (the same key).
-This can be useful for configuring multiple ways to extract the same information.
-The first data extract statement that produces valid output will set the value for the given key.
-This is supported for both regular expressions and scripts and a mixture of both.
+The `DataExtract` statement allows multiple entries with the same Name (the
+same key).  This can be useful for configuring multiple ways to extract the
+same information.  The first data extract statement that produces valid output
+will set the value for the given key.  This is supported for both regular
+expressions and scripts and a mixture of both.
 
-The example below shows two statements that will both create the key value pair for the key "Version".
-If "1" does not produce valid output the next one is tried, in this case "2".
+The example below shows two statements that will both create the key value pair
+for the key "Version".  If "1" does not produce valid output the next one is
+tried, in this case "2".
 
 Example:
 

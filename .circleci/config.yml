@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
       - run: docker-compose build fwanalyzer
-      - run: docker-compose run --rm fwanalyzer make deps 
+      - run: docker-compose run --rm fwanalyzer make deps
       - run: docker-compose run --rm fwanalyzer make
 
   test:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - checkout
       - run: docker-compose build fwanalyzer
-      - run: docker-compose run --rm fwanalyzer make deps 
+      - run: docker-compose run --rm fwanalyzer make deps
       - run: docker-compose run --rm fwanalyzer make testsetup ci-tests
 
 workflows:

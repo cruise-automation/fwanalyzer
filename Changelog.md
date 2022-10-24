@@ -5,10 +5,15 @@ Always update Version in Makefile
 
 ## Unreleased
 
+## [v1.4.4] - 2022-10-24
+
 ### Changed
 - updated Building.md
 - updated Readme.md
-- Scripts now get the full filepath as second argument (before it would pass `bash` now it would pass `/bin/bash`)
+- Scripts now get the full filepath as second argument (before it would pass `bash` now it will pass `/bin/bash`)
+
+### Fixed
+- Fix a bug where incorrect keys in checksec were silently skipped
 
 ## [v1.4.3] - 2020-08-17
 

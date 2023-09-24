@@ -76,7 +76,7 @@ func (e *Ext2Parser) enableSeLinux() {
 }
 
 func (e *Ext2Parser) enableCapabilities() {
-	// with capabilites support (-C)
+	// with capabilities support (-C)
 	// 2600  100750     0  2000     1041   1-Jan-2009 03:00 init.environ.rc 0x2000001,0x0,0x0,0x0,0x0
 	// `^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+-\w+-\d+)\s+(\d+:\d+)\s+(\S+)\s+(\S+)`)
 

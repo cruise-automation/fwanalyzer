@@ -155,7 +155,7 @@ func (state *dataExtractType) CheckFile(fi *fsparser.FileInfo, filepath string) 
 							data = append(data, i[1])
 						}
 					}
-					// convert to JSON arrary
+					// convert to JSON array 
 					jdata, _ := json.Marshal(data)
 					state.a.AddData(item.Name, string(jdata))
 					nameFilled[item.Name] = true

@@ -278,7 +278,7 @@ func (s *SquashFSParser) CopyFile(filepath string, dstdir string) bool {
 
 	// The -d argument to unsquashfs specifies a directory to unsquash to, but
 	// the directory can't exist. It also extracts the full path. To fit the
-	// semantics of CopyFile, we need to extract to a new temporary directy and
+	// semantics of CopyFile, we need to extract to a new temporary directly and
 	// then copy the file to the specified destination.
 	tmpdir, err := ioutil.TempDir("", "squashfsparser")
 	if err != nil {
